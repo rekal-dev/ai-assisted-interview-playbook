@@ -2,7 +2,21 @@
 
 [Catalog](../README.md) · [Interviewer guide](interviewer-guide.md)
 
-Status: scenario specification and interviewer guide. Runnable starter and harness are planned.
+Status: executable starter, reference repair, controlled delivery, and 10 contract checks. Not hiring-piloted.
+
+## Run and administer
+
+From the repository root:
+
+~~~sh
+python3 interview.py test projections --implementation starter
+python3 interview.py test projections --implementation reference
+python3 interview.py export projections --output candidate-packets/projections
+~~~
+
+The starter intentionally fails five checks.
+
+Use the [candidate brief](CANDIDATE.md), [intent rubric](rubric.md), [interviewer guide](interviewer-guide.md), and [example intent and revision](example-intent.md). Real code: [starter](starter.py), [reference](reference.py), and [checks](test_contract.py).
 
 ## Candidate situation
 
@@ -29,7 +43,7 @@ Investigate and repair the projection's acceptance rule. Reproduce one regressio
 
 Cross-entity transactions, multiple independent writers, partial updates, schema migration, and deployment are excluded.
 
-## Materials to prepare
+## Included environment
 
 A small incorrect consumer, an event corpus, a query adapter, a durable store, and a deterministic scheduler for delivery order and concurrent consumers.
 

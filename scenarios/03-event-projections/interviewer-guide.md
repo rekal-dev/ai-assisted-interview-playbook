@@ -36,9 +36,9 @@ Finally apply a valid snapshot at version 10. Recreation is allowed by the publi
 | Problem formulation | Checks snapshots versus deltas and the source's ordering guarantee |
 | State modeling | Preserves accepted order even when the entity is not visible |
 | Safety and transitions | Couples version comparison and payload mutation atomically |
-| Liveness and recovery | Permits eventual newest state and valid recreation |
-| Investigation and evidence | Predicts regression under both reordering and a concurrent write |
-| Adaptation and delivery | Handles deletion without permanently rejecting later valid versions |
+| Constraints and progress | Permits eventual newest state and valid recreation |
+| Falsification and evidence | Predicts regression under both reordering and a concurrent write |
+| Revision and delivery | Handles deletion without permanently rejecting later valid versions |
 
 ## Clarifications and hints
 
@@ -48,4 +48,8 @@ Use the [common timeline](../../docs/interview-process.md). Changing snapshots i
 
 ## Readiness
 
-Specification only. A runnable consumer, query adapter, deterministic event scheduler, and calibrated result set are future work.
+Run python3 interview.py verify before a session. Five starter checks fail intentionally; reference.py passes all ten. Use the [intent example](example-intent.md) and [scenario rubric](rubric.md).
+
+The reference retains a versioned logical deletion and compares source version in the same transaction as mutation. The concurrency check pauses a lower version before commit, applies a higher one, then resumes it. Delivery permutations check replay, restart, deletion, and recreation.
+
+Executable checks are established. Human pilots, AI-only measurements, and difficulty equivalence remain unvalidated.

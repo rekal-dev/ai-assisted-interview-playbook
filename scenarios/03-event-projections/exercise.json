@@ -1,0 +1,11 @@
+{
+  "name": "projections",
+  "candidate_files": ["starter.py", "test_contract.py", "rubric.md", "incident.json"],
+  "expected_starter_failures": [
+    "test_bounded_delivery_permutations_converge",
+    "test_concurrent_lower_version_cannot_overwrite_higher",
+    "test_deletion_retains_ordering_information",
+    "test_older_event_cannot_resurrect_deleted_entity",
+    "test_restart_retains_deletion_order"
+  ]
+}

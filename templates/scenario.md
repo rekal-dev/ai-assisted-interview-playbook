@@ -28,6 +28,15 @@ All material facts must be available to the candidate and AI tools. Distinguish 
 
 List starter code, incident material, simulator facilities, public checks, and common evaluation cases. Give actual run commands only when implementations exist.
 
+For a take-and-use packet, include starter.py, reference.py, test_contract.py,
+exercise.json, incident.json, CANDIDATE.md, rubric.md, and interviewer-guide.md.
+List candidate_files and exact expected_starter_failures in exercise.json.
+Add the slug to interview.py and run its verify command. Include example-intent.md
+for interviewers and the shared intent.md worksheet in candidate exports.
+
+The candidate writes initial intent before editing, then revises it after evidence.
+Score that formulation explicitly; record functional check results separately.
+
 ## Published failure categories
 
 Describe permitted failure categories. Evaluation cases must remain within this contract.

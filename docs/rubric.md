@@ -1,101 +1,89 @@
-# Observable rubric
+# Intent prompt rubric
 
 [Back to README](../README.md)
 
-## How to rate
+## What is scored
 
-Score the six dimensions separately. Every score needs an observed decision, artifact, or result. A proposed equal-weight profile is a starting point for piloting; no hiring cutoff has been validated.
+The initial intent prompt and its evidence-driven revision are first-class artifacts. Evaluate the engineering decisions they express, then use code, execution, and the handoff to check coherence.
+
+A concise prompt may score strongly. Generic terminology, a long checklist, eloquence, or the number of AI calls earns no points by itself. AI may help formulate the prompt.
+
+Record functional conformance separately. A generated implementation passing all checks does not automatically establish strong problem-formulation evidence; an intelligent prompt also does not erase a known code failure.
+
+## Rating scale
 
 | Rating | Meaning |
 | --- | --- |
-| 0 | An observed central contradiction or relevant failure remains unresolved. |
-| 1 | Relevant work is present, with material gaps. |
-| 2 | The main claim is supported within the exercise. |
-| 3 | Evidence withstands relevant variations and the claim has precise limits. |
+| 0 | Observed instruction or final claim conflicts with a central requirement and remains unreconciled. |
+| 1 | Relevant intent is present but material decisions are missing. |
+| 2 | Intent is specific, coherent, and supported in the owned scope. |
+| 3 | The formulation withstands a relevant challenge and is revised with precise limits. |
 | N/E | The session did not elicit enough evidence. This is not zero. |
 
-The anchors below define what those ratings mean in context. Scenario guides supply domain examples, not extra hidden scoring dimensions.
+Use the six dimensions below and the scenario's rubric.md. Quote the relevant instruction or revision and link the resulting evidence. Equal weighting is a pilot starting point; no universal hiring threshold is supplied.
 
 ## 1 Problem formulation
 
-| Rating | Behavioral anchor |
+| Rating | Observable anchor |
 | --- | --- |
-| 0 | Delivers behavior inconsistent with a central requirement and does not reconcile an observable discrepancy. |
-| 1 | States the goal but leaves a material ambiguity unresolved or assumes an environmental guarantee that is not provided. |
-| 2 | Defines a scoped contract, separates facts from assumptions, and resolves semantics relevant to the chosen design. |
-| 3 | Meets 2 and prioritizes the uncertainty that would most change the design; explains alternative contracts and makes the consequential decision explicit. |
-
-Look for a material question, its answer, and its consequence. Question count is not evidence of quality.
+| 0 | Directs behavior inconsistent with a core requirement and leaves the conflict unresolved. |
+| 1 | Requests a fix or improvement without defining the relevant outcome, scope, or uncertainty. |
+| 2 | States the outcome and non-goals, resolves a consequential fact, and identifies the failure to own. |
+| 3 | Distinguishes plausible interpretations, prioritizes the question that changes the design, and makes the chosen contract explicit. |
 
 ## 2 State modeling
 
-| Rating | Behavioral anchor |
+| Rating | Observable anchor |
 | --- | --- |
-| 0 | The delivered representation conflates configurations that require different outcomes. |
-| 1 | Represents normal behavior but omits information needed for a permitted replay, reordering, reassignment, or restart. |
-| 2 | Preserves relevant identities and authoritative facts, including stale local information and external state when the claim requires it. |
-| 3 | Meets 2 and explains why consequential distinctions are necessary; derives or removes redundant state without losing relevant behavior and can justify another viable representation. |
-
-More fields and services are not automatically better. State names alone do not describe the full system model.
+| 0 | Conflates configurations requiring different outcomes and preserves that conflation in the final instruction. |
+| 1 | Lists statuses or components without the identity, history, authority, or durability needed by the case. |
+| 2 | Specifies distinctions and boundaries sufficient to reason about the relevant execution. |
+| 3 | Justifies why those distinctions are necessary and simplifies or revises the representation without losing a required behavior. |
 
 ## 3 Safety and transitions
 
-| Rating | Behavioral anchor |
+| Rating | Observable anchor |
 | --- | --- |
-| 0 | A permitted execution violates a claimed central guarantee and the final claim remains unchanged. |
-| 1 | Names plausible properties but supports only sequential success or leaves concurrency and mutation boundaries unexplained. |
-| 2 | States relevant safety conditions and connects them to the authoritative guards and mutations for competing operations and replay. |
-| 3 | Meets 2 and accounts for all relevant mutation paths exercised by the scenario; detects when a proposed fix merely moves the violation elsewhere. |
+| 0 | Silently weakens a business guarantee or accepts a known violation. |
+| 1 | Asks for correctness, thread safety, or idempotency without a concrete property. |
+| 2 | States the relevant invariant and directs attention to the authoritative guard and mutation. |
+| 3 | Connects the property to initialization and relevant mutation paths, including the adjacent case or restart. |
 
-The implementation must enforce the property it claims. Terminology such as transaction, idempotency, monotonicity, or fencing is insufficient by itself.
+## 4 Constraints and progress
 
-## 4 Liveness and recovery
-
-| Rating | Behavioral anchor |
+| Rating | Observable anchor |
 | --- | --- |
-| 0 | Preserves safety by indefinitely blocking legitimate work or stranding recoverable state under the stated recovery conditions. |
-| 1 | Suggests retries, cleanup, or scheduling generally while leaving the relevant progress mechanism or assumptions unresolved. |
-| 2 | Shows the progress mechanism and identifies the availability, delivery, scheduling, and recovery assumptions it needs. |
-| 3 | Meets 2 and investigates a repeated-retry or starvation case; distinguishes eventual progress from a bounded completion-time claim. |
+| 0 | Relies on an unavailable guarantee or preserves safety by permanently blocking required work. |
+| 1 | Requests retries, cleanup, or performance generally without the assumptions they require. |
+| 2 | States the material environmental guarantees and the mechanism for progress after recovery. |
+| 3 | Separates assumptions from requirements, detects a starvation or repeated-retry risk, and distinguishes eventual progress from a bounded-time claim. |
 
-Legitimate rejections can be definitive outcomes. Liveness does not imply every customer gets capacity or every payment succeeds.
+## 5 Falsification and evidence
 
-## 5 Investigation and evidence
-
-| Rating | Behavioral anchor |
+| Rating | Observable anchor |
 | --- | --- |
-| 0 | Leaves a central claim contradicted by observed evidence or reports checks as executed when they were not. |
-| 1 | Runs examples or accepts generated checks that do not distinguish the relevant hypothesis or independently check the requirement. |
-| 2 | Records a prediction, reproduces a valid failure, runs a repair against it, and retains evidence of a relevant regression check. |
-| 3 | Meets 2 and reduces or generalizes the failure, seeks plausible disconfirming evidence, and accurately describes test or model-checking limits. |
+| 0 | Accepts a central claim contradicted by observed results or reports checks as executed when they were not. |
+| 1 | Asks for tests or review without specifying a relevant counterexample or acceptance observation. |
+| 2 | Gives a predicted failing history and acceptance check, then executes or inspects the resulting evidence. |
+| 3 | Seeks a plausible disconfirming case, reduces or generalizes the failure, and states the bounds of the checks. |
 
-A second model agreeing with the first is not equivalent to an executed check. A bounded replay or model check establishes a result for its specified conditions and bounds.
+## 6 Revision and delivery
 
-## 6 Adaptation and delivery
-
-| Rating | Behavioral anchor |
+| Rating | Observable anchor |
 | --- | --- |
-| 0 | Delivers an artifact that does not support its claimed behavior and omits a known central failure from the handoff. |
-| 1 | Patches one observed example while leaving a related failure unresolved, or gives an explanation inconsistent with the final artifact. |
-| 2 | Revises the model or implementation in response to evidence, preserves relevant earlier behavior, and provides a reproducible result with explicit limitations. |
-| 3 | Meets 2 and handles the common adjacent case through a coherent generalization; explains why the argument extends without unnecessary scope expansion. |
+| 0 | Ignores decisive new evidence or delivers a claim inconsistent with the artifact. |
+| 1 | Requests a patch for the observed output without revising the model or documenting remaining gaps. |
+| 2 | Updates the instruction because of evidence, preserves the earlier property, and hands over a reproducible scoped result. |
+| 3 | Repairs the underlying distinction or assumption, handles the adjacent case coherently, and states what remains unverified. |
 
-A larger feature extension is not needed for a score of 3 in the 60-minute format.
+## Evidence notes
 
-## Prompt and delegation evidence
+Useful: the initial prompt treated timeout as failure; after observing a bank charge with a lost response, the revised prompt distinguishes unknown from declined, requires one stable bank identity, and directs a crash/recovery check.
 
-A candidate prompt can encode context selection, an identity distinction, a hypothesis, a counterexample, a proposed repair, or a stopping condition. Assess whether those choices lead to supported outcomes.
+Insufficient: good instincts, great prompts, senior thinking.
 
-Do not score wording sophistication, prompt length, number of calls, manual coding volume, constant narration, or performative disagreement with AI. Effective autonomous delegation can earn full credit.
+Factual clarification is legitimate work. Record interviewer hints that supply a diagnosis or repair. AI suggestions are allowed; capture what the candidate adopts, tests, and revises.
 
-Record interviewer hints separately from ordinary factual answers and permitted AI suggestions. A supplied diagnosis changes what was observed about discovery; it does not erase evidence of later repair and verification.
+A second model's agreement is not a checked proof. A bounded test or model check applies to its stated model and bounds.
 
-## Write defensible notes
-
-Useful: before replay, the candidate predicted that a delayed request would cross an ownership boundary; the replay failed; the repair added an authoritative distinction and passed both that trace and committed-result replay.
-
-Insufficient: good instincts, senior thinking, excellent prompts.
-
-Assessors should score independently before discussing differences. Reconcile ratings against observations, retain N/E when appropriate, and do not average away a known central contract violation.
-
-Use [calibration](calibration.md) before choosing role-specific interpretation or thresholds.
+Use [calibration](calibration.md) to establish rating agreement and any role-specific interpretation.

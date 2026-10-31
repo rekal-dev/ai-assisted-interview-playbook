@@ -1,53 +1,56 @@
-# Interview evidence and scorecard
+# Intent and outcome scorecard
 
 ## Session
 
-- Candidate identifier:
-- Role and target level:
-- Date and assessors:
+- Candidate identifier and role:
 - Scenario and version:
-- Starter and harness versions:
-- AI tools and resource budget:
+- Date, assessors, AI tools:
 - Environment issues and treatment of lost time:
+- Agreed failure to own:
 - Common adjacent case:
 
-## Evidence
+## Initial intent artifact
 
-| Time | Observation or uncertainty | Claim and prediction | Action or prompt | Actual evidence and revision | Assistance or hint |
+- Captured before code edits:
+- Intended outcome and scope:
+- Relevant identities and state:
+- Invariant and authoritative transition:
+- Assumptions and progress:
+- Predicted counterexample and acceptance evidence:
+- Quote or link to the actual prompt:
+
+## Evidence and revision
+
+| Time | Claim or instruction | Prediction | Actual result | Revised instruction | Interviewer hint |
 | --- | --- | --- | --- | --- | --- |
 | | | | | | |
 | | | | | | |
 | | | | | | |
-| | | | | | |
 
-Record predictions before the relevant result. Capture consequential decisions rather than every keystroke.
+## Intent ratings
 
-## Six dimension profile
+Use the common anchors and scenario rubric. N/E means insufficient evidence.
 
-Use the [observable rubric](../docs/rubric.md). N/E means insufficient evidence and is not zero.
-
-| Dimension | 0–3 or N/E | Timestamp or artifact | Confidence and missing evidence |
+| Dimension | 0–3 or N/E | Prompt excerpt or revision | Corroborating evidence |
 | --- | --- | --- | --- |
 | Problem formulation | | | |
 | State modeling | | | |
 | Safety and transitions | | | |
-| Liveness and recovery | | | |
-| Investigation and evidence | | | |
-| Adaptation and delivery | | | |
+| Constraints and progress | | | |
+| Falsification and evidence | | | |
+| Revision and delivery | | | |
 
-## Outcome
+## Functional outcome recorded separately
 
 - Original failure reproduced:
-- Delivered repair and reproduction instructions:
-- Primary check and actual result:
-- Adjacent check and actual result:
-- Known central contract violation:
-- Safety guarantee and supporting argument:
-- Progress guarantee and assumptions:
-- Test or model-checking bounds:
-- Remaining uncertainty:
-- Relevant AI-only baseline version:
-- What this session demonstrates about assisted performance:
-- What was not observed:
+- Check names actually run and results:
+- Related regression result:
+- Owned repair complete:
+- Full suite conformance:
+- Remaining failing checks:
+- Supported guarantee and assumptions:
+- Verification bounds:
+- Reproduction command and handoff:
+- Relevant AI-only baseline:
 
-Score independently before discussing assessor differences. No universal numerical hiring threshold is supplied.
+Passing checks do not automatically determine intent ratings. Record disagreement against concrete evidence before using any aggregate or hiring interpretation.

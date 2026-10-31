@@ -2,7 +2,21 @@
 
 [Catalog](../README.md) · [Interviewer guide](interviewer-guide.md)
 
-Status: scenario specification and interviewer guide. Runnable starter and bank simulator are planned.
+Status: executable starter, reference repair, bank simulator, and 11 contract checks. Not hiring-piloted.
+
+## Run and administer
+
+From the repository root:
+
+~~~sh
+python3 interview.py test payments --implementation starter
+python3 interview.py test payments --implementation reference
+python3 interview.py export payments --output candidate-packets/payments
+~~~
+
+The starter intentionally fails six checks.
+
+Use the [candidate brief](CANDIDATE.md), [intent rubric](rubric.md), [interviewer guide](interviewer-guide.md), and [example intent and revision](example-intent.md). Real code: [starter](starter.py), [reference](reference.py), [bank](bank_simulator.py), [intent base](payment_base.py), and [checks](test_contract.py).
 
 ## Candidate situation
 
@@ -28,7 +42,7 @@ Investigate and repair the submission and recovery behavior. Keep the model smal
 
 Refunds, multiple providers, currency conversion, fraud decisions, deployment, and garbage collection are excluded.
 
-## Materials to prepare
+## Included environment
 
 A small incorrect service, a durable intent store, a bank simulator with an independent ledger, deterministic failure injection, and a recorded timeout incident.
 

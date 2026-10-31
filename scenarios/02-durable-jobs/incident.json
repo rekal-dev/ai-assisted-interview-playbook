@@ -1,0 +1,9 @@
+{
+  "fictional": true,
+  "events": [
+    {"time": 0, "operation": "claim", "job_id": "J", "worker": "A"},
+    {"time": 31, "operation": "claim", "job_id": "J", "worker": "B"},
+    {"time": 31, "operation": "publish", "job_id": "J", "worker": "A", "result": "stale"}
+  ],
+  "reported_symptom": "A resumed worker published after another worker took over."
+}

@@ -2,7 +2,21 @@
 
 [Catalog](../README.md) · [Interviewer guide](interviewer-guide.md)
 
-Status: scenario specification and interviewer guide. Runnable starter and harness are planned.
+Status: executable starter, reference repair, and 9 contract checks. Not hiring-piloted.
+
+## Run and administer
+
+From the repository root:
+
+~~~sh
+python3 interview.py test reservations --implementation starter
+python3 interview.py test reservations --implementation reference
+python3 interview.py export reservations --output candidate-packets/reservations
+~~~
+
+The starter intentionally fails four checks. Give the exported packet to the candidate.
+
+Use the [candidate brief](CANDIDATE.md), [intent rubric](rubric.md), [interviewer guide](interviewer-guide.md), and [example intent and revision](example-intent.md). Real code: [starter](starter.py), [reference](reference.py), and [checks](test_contract.py).
 
 ## Candidate situation
 
@@ -28,7 +42,7 @@ Investigate a small supplied implementation and its incident material. Reproduce
 
 No payments, cancellations, refunds, authentication, deployment, or garbage collection are included.
 
-## Materials to prepare
+## Included environment
 
 - A small incorrect service and a request history.
 - Atomic store and virtual clock documentation.

@@ -1,0 +1,10 @@
+{
+  "fictional": true,
+  "capacity": 1,
+  "events": [
+    {"time": 0, "operation": "hold", "request_id": "A"},
+    {"time": 31, "operation": "hold", "request_id": "B"},
+    {"time": 31, "operation": "confirm", "hold_from_request": "A"}
+  ],
+  "reported_symptom": "An old confirmation appeared to succeed after the seat had been reassigned."
+}

@@ -38,9 +38,9 @@ Include simultaneous recovery attempts and replay of an already recorded success
 | Problem formulation | Resolves the bank's actual idempotency and lookup guarantees |
 | State modeling | Includes external ledger, in-flight messages, and durable local intent |
 | Safety and transitions | Keeps a stable operation identity and records truthful terminal outcomes |
-| Liveness and recovery | Schedules durable reconciliation and states eventual bank and communication assumptions |
-| Investigation and evidence | Reproduces the bank-committed/local-pending window and inspects both sides |
-| Adaptation and delivery | Handles restart and simultaneous recovery without new charge identities |
+| Constraints and progress | Schedules durable reconciliation and states eventual bank and communication assumptions |
+| Falsification and evidence | Reproduces the bank-committed/local-pending window and inspects both sides |
+| Revision and delivery | Handles restart and simultaneous recovery without new charge identities |
 
 ## Clarifications and hints
 
@@ -50,4 +50,8 @@ Use the [common timeline](../../docs/interview-process.md). Finite provider dedu
 
 ## Readiness
 
-Specification only. No bank simulator, service implementation, reference repair, or pilot result is included yet.
+Run python3 interview.py verify before a session. Six starter checks fail intentionally; reference.py passes all eleven. Use the [intent example](example-intent.md) and [scenario rubric](rubric.md).
+
+payment_base.py supplies durable intents. bank_simulator.py has its own ledger and controls for lost responses, delayed requests, and unavailability. The reference reuses one stable bank key, retains pending on timeout, and reconciles before publishing a terminal local result.
+
+Checks exercise all three crash boundaries and simultaneous recovery. The simulator is checked locally; human pilots and AI-only measurements remain unperformed.

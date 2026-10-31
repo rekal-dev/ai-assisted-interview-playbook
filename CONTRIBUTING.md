@@ -1,44 +1,42 @@
-# Contributing
+# Contributing runnable interview situations
 
-The repository develops a reusable assessment pattern. Contributions should improve the relationship between a scenario, observable engineering decisions, and supported ratings.
+The original screenshots' argument and the intent-prompt thesis are the starting point. Contributions should make judgment, modeling, and problem formulation observable in a concrete executable situation.
 
-## Add a scenario
+## Minimum exercise
 
-1. Start with the [scenario template](templates/scenario.md).
-2. Give a situation with a consequential, observable failure.
-3. Publish the environment guarantees, permitted failures, and required outcomes.
-4. Leave representation, investigation order, and implementation strategy open.
-5. Keep the [60-minute result](docs/interview-process.md) small enough to complete with prepared materials.
-6. Document at least two defensible approaches and implementation-independent checks.
-7. Map observations to the existing [six rubric dimensions](docs/rubric.md).
-8. Record readiness and pilot status accurately.
+Each scenario includes:
 
-Use one directory per scenario with a candidate README and an interviewer guide. Separating those files organizes administration; both remain public and available for AI-only baselines.
+- README.md with working root commands.
+- CANDIDATE.md for the standalone candidate packet.
+- starter.py with a small, plausible, intentional defect.
+- reference.py with a checked repair.
+- test_contract.py exposing build_suite(Service).
+- exercise.json listing candidate files and exact expected starter failures.
+- incident.json with fictional context.
+- rubric.md tying intent decisions to named checks.
+- interviewer-guide.md with a reference walkthrough and adjacent case.
+- Any local simulator or prepared infrastructure needed by both implementations.
 
-## Preserve comparison
+Add the scenario to interview.py and the catalog. Use the existing files as an executable template. Keep dependencies in the standard library and avoid cloud setup.
 
-Use common milestones, neutral probes, factual clarification rules, and an adjacent failure case selected in advance. Do not impose an extra feature as an unstated completion requirement.
+## Contract and comparison
 
-Specify identities, replay behavior, time boundaries, storage guarantees, and progress assumptions wherever they affect correctness. A candidate should not need to guess an unpublished business rule.
+Keep the 60-minute core: initial intent, one failure, one supported repair, adjacent evidence, revised intent, and handoff. Publish identities, replay behavior, time boundaries, storage guarantees, and progress assumptions.
 
-Accept equivalent schemas and any result permitted by the contract. Difficulty should not depend on one obscure algorithm, preferred vendor, or exact field name.
+Preserve the six intent dimensions. Accept equivalent representations and legal outcomes. A specific schema, vendor, vocabulary, or obscure trick must not be the only path to a strong rating.
 
-## Add executable materials
+Hooks are diagnostic boundaries outside authoritative transactions. Keep their names and documented context stable so failures remain reproducible.
 
-Starter code should be small, deterministic, and runnable without cloud setup. A harness should expose histories and effects, support reproducible failure injection, and check published properties.
+## Checks
 
-Document actual run commands and dependencies. Keep failing starter examples distinguishable from a reference repair. Mark what is checked by execution and what still depends on a model argument.
+Run python3 interview.py verify. It requires reference checks to pass, starter failures to match the manifest without infrastructure errors, and exported packets to run independently. Never silently accept any failing starter as a valid baseline.
 
-Do not claim an executable kit exists when only its specification has been written. Do not report a bounded replay as a proof about arbitrary production behavior.
+Use implementation-independent observations and a meaningful counterexample. Record what bounded exploration does and does not establish.
 
-## Report pilot results
+## Pilot evidence
 
-Use the [scorecard](templates/scorecard.md) and [baseline record](templates/ai-baseline.md). Record versions, comparable access and resources, hint provenance, actual checks, and repeated outcomes.
+Executable correctness does not establish hiring validity. Use anonymized or fictional material, the scorecard, and repeated AI-only baselines. Record versions, comparable access and resources, actual checks, and rating disagreements.
 
-Use anonymized or fictional material; do not contribute private candidate transcripts, employer incidents, credentials, or confidential code.
+No private candidate transcript, employer incident, credential, or confidential source code belongs in the repository.
 
-Describe scenario equivalence and hiring interpretation as hypotheses until supported by data. Keep previous results with their versions.
-
-## Documentation checks
-
-Before proposing changes, check relative links, timeline totals, rubric dimension consistency, and readiness statements. Keep canonical timing in the process guide. Scenarios should link to it rather than copy conflicting schedules.
+Check relative links, current counts, timeline consistency, and readiness statements when changing the framework.

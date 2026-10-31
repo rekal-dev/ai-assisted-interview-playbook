@@ -14,9 +14,9 @@ A clear rubric helps the first. It does not establish the second or third.
 
 ## Pilot the complete 60 minute experience
 
-Assemble the scenario materials before claiming interview readiness. Run them with engineers representative of the role. Measure time spent on orientation, reading, reproduction, repair, verification, and handoff.
+Use the included executable packet and first run python3 interview.py verify. Run the session with engineers representative of the role. Measure time spent on orientation, reading, reproduction, repair, verification, and handoff.
 
-If setup or code comprehension overwhelms the session, reduce the materials or repair scope. Keep the 60-minute core: one reproduced failure, a supported repair, an adjacent check, and a handoff. Do not turn a larger feature extension into an unstated pass condition.
+If setup or code comprehension overwhelms the session, reduce the materials or repair scope. Keep the 60-minute core: initial intent, one reproduced failure, a supported repair, an adjacent check, revised intent, and a handoff. Do not turn a larger feature extension into an unstated pass condition.
 
 Check that the contract is achievable with the supplied primitives and that more than one defensible representation can earn the strongest ratings.
 

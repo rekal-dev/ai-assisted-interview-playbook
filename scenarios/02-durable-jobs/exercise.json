@@ -1,0 +1,10 @@
+{
+  "name": "jobs",
+  "candidate_files": ["starter.py", "job_base.py", "test_contract.py", "rubric.md", "incident.json"],
+  "expected_starter_failures": [
+    "test_publication_replay_survives_expiry_and_restart",
+    "test_stale_publication_is_rejected",
+    "test_stale_renewal_is_rejected",
+    "test_unknown_token_cannot_publish"
+  ]
+}

@@ -10,6 +10,8 @@
 - Access to complete rubric and guides:
 - Factual clarification channel:
 - Initial instruction:
+- Initial intent artifact:
+- Revised intent after evidence:
 
 ## Results
 
@@ -33,9 +35,9 @@ Apply the same [rubric](../docs/rubric.md) to observable work.
 | Problem formulation | | |
 | State modeling | | |
 | Safety and transitions | | |
-| Liveness and recovery | | |
-| Investigation and evidence | | |
-| Adaptation and delivery | | |
+| Constraints and progress | | |
+| Falsification and evidence | | |
+| Revision and delivery | | |
 
 ## Interpretation
 

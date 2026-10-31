@@ -1,121 +1,113 @@
 # AI Assisted Interview Playbook
 
-A reusable pattern for **60-minute systems engineering interviews with unrestricted AI assistance**.
+Ready-to-use **60-minute interviews with unrestricted AI**: runnable broken services, deterministic checks, reference repairs, candidate packets, and intent-prompt rubrics. Python 3.10+ and the standard library are sufficient.
 
-The assessment starts with a bounded situation: incomplete context, observable failures, and a precise environment. Candidates formulate the problem, choose a model, direct investigation, repair behavior, and support their conclusions with evidence.
+## LeetCode is dead What are we measuring now
 
-The repository establishes the interview process, modeling rationale, observable rubrics, and a common format for adding scenarios. The scenarios make the pattern concrete; the pattern is the main contribution.
+The original screenshots open the problem this repository addresses. Algorithm interviews compress engineering into a clean, closed world with fixed inputs and a cheap verifier. As AI becomes effective at that test, the test can lose its value as a hiring signal.
 
-**Current status:** a documentation-first assessment framework with four scenario specifications and interviewer guides. Starter implementations, executable harnesses, pilot results, and validated hiring thresholds are future work.
+**The underlying thinking still matters.** The screenshots argue that its lasting value is the ability to define state, recognize invariants, choose an abstraction, understand constraints, and falsify a plausible solution.
 
-## Start here
+Their Cracking the Safe example makes the point concrete: treating passwords as nodes suggests a search problem; treating length n−1 suffixes as nodes and passwords as edges exposes an Eulerian traversal. Choosing the model changes the work.
 
-1. Read the [modeling rationale](docs/rationale.md).
-2. Use the [60-minute process](docs/interview-process.md) and [observable rubric](docs/rubric.md).
-3. Select a [scenario](scenarios/README.md) and prepare its required materials.
-4. Record consequential decisions with the [scorecard](templates/scorecard.md).
-5. Pilot with engineers and [AI-only baselines](docs/calibration.md) before using scores for selection.
+Real engineering adds retries, crashes, stale workers, and uncertain external effects. The article therefore proposes moving assessment toward **problem formulation and adversarial verification**. Our discussion develops that argument into this practical framework.
 
-## Purpose
+Read the [screenshots' argument and our analysis](docs/original-argument.md), or run its [modeling example](examples/state_space_demo.py):
 
-This project develops a repeatable way to observe how engineers working with AI:
+~~~sh
+python3 examples/state_space_demo.py --n 2 --k 2
+~~~
 
-- Convert a situation into explicit requirements and assumptions.
-- Choose a representation that preserves distinctions needed for correctness.
-- Identify properties and connect them to actual transition boundaries.
-- Investigate uncertainty through predictions, experiments, and counterexamples.
-- Revise their model when evidence contradicts it.
-- Deliver a result with supported guarantees and clearly stated limits.
+## The intent prompt is the signal
 
-A candidate's prompts express choices about context, goals, hypotheses, delegation, and verification. We evaluate those choices through their consequences. Prompt length, fluent narration, and specific terminology are not scoring criteria.
+Our working thesis is that the candidate's **intent prompt is a first-class assessment artifact**.
 
-## Why state space and invariants
+It expresses what the candidate thinks the problem is: which facts matter, which identities and states must be distinguished, what must remain true, what AI may assume, which trade-offs are acceptable, and what evidence would justify accepting a repair.
 
-A system design contains a model of what can exist, what can change, and what behavior is acceptable. Making that model explicit exposes errors that a plausible implementation can hide.
+The candidate writes [intent.md](templates/intent.md) before editing code, uses AI freely, and revises that instruction after new evidence. We score the formulation and revision against actual behavior. Fluent prose, a generic checklist, or passing test count alone does not establish a strong intent score.
 
-| Concept | Question |
-| --- | --- |
-| State space | Which configurations can the chosen representation express? |
-| Initial conditions | Which configurations may execution start from? |
-| Transitions | Which changes can operations, concurrency, time, and failures cause? |
-| Invariants | What must remain true in every reachable configuration? |
-| Liveness | What progress must eventually occur, under which assumptions? |
-| Assumptions and constraints | Which environmental guarantees, resource limits, and required outcomes apply? |
+This assesses judgment, modeling, and directing engineering work with AI. AI may help formulate the prompt too; the artifact and its consequences remain observable.
 
-These are connected parts of a system specification. State space alone does not determine transitions or guarantee progress. Two designs can have the same status labels and preserve the same safety condition while one retries forever.
+## Take a packet and use it
 
-The hard modeling question is which distinctions matter. In a reservation service, a seat's identity may not distinguish an expired hold from a newer hold on that seat. Adding the right identity can expose a simple authoritative transition. Adding infrastructure without that distinction can preserve the original bug.
+~~~sh
+git clone https://github.com/rekal-dev/ai-assisted-interview-playbook.git
+cd ai-assisted-interview-playbook
 
-The invariant expresses a business obligation. Changing its representation is useful only if the externally required guarantee is preserved. See the [worked explanation and formal relationships](docs/rationale.md).
+# Verify references, expected starter failures, exports, and the modeling demo.
+python3 interview.py verify
 
-## The interview pattern
+# Export a self-contained candidate packet.
+python3 interview.py export reservations --output candidate-packets/reservations
+cd candidate-packets/reservations
+python3 run.py
+~~~
 
-Observe a sequence of decisions:
+The starter intentionally fails checks and returns exit code 1. The candidate repairs starter.py while retaining the API and harness. Each packet contains a concrete situation, incident, code, contract tests, deterministic failure controls, intent worksheet, rubric, and standalone run.py.
 
-**Observation → interpretation → model → prediction → experiment → evidence → revision**
+Reference repairs and interviewer guides are omitted from exports. They are public in this repository; export is a distribution convenience, not a secrecy guarantee.
 
-The candidate can use AI at every step. The interviewer uses common checkpoints and evidence requests, while the candidate chooses how to investigate.
+From the repository root:
 
-| Minutes | Activity |
-| --- | --- |
-| 0–5 | Understand the situation, scope, and available environment |
-| 5–12 | Clarify a consequential uncertainty and propose a working model |
-| 12–22 | Predict and reproduce one failure |
-| 22–40 | Repair the relevant transition and check the claim |
-| 40–52 | Exercise a common adjacent failure case and revise |
-| 52–60 | Deliver the artifact, argument, evidence, and remaining limits |
+~~~sh
+python3 interview.py list
+python3 interview.py test reservations --implementation starter
+python3 interview.py test reservations --implementation reference
+python3 interview.py test jobs --implementation reference
+python3 interview.py test projections --implementation reference
+python3 interview.py test payments --implementation reference
+~~~
 
-The core deliverable is one supported repair with a relevant regression check. A larger feature extension is optional follow-up work. The [process guide](docs/interview-process.md) defines the probes, assistance rules, and scope.
+## Four executable exercises
 
-## Observable rubric
-
-The same six dimensions apply across scenarios:
-
-| Dimension | Evidence |
-| --- | --- |
-| Problem formulation | Material uncertainty resolved; facts separated from assumptions |
-| State modeling | Configurations requiring different outcomes remain distinguishable |
-| Safety and transitions | Required properties connected to authoritative mutations |
-| Liveness and recovery | Progress mechanism and necessary assumptions made explicit |
-| Investigation and evidence | Prediction, discriminating experiment, actual result, and revision |
-| Adaptation and delivery | Coherent repair, related regression, reproducible handoff |
-
-Each dimension has behavioral anchors from 0 to 3, plus N/E for insufficient evidence. There is no validated numerical hiring cutoff. See the [complete anchors](docs/rubric.md) and [scorecard](templates/scorecard.md).
-
-## Scenarios
-
-| Scenario | Modeling focus | Status |
+| Exercise | Modeling problem | Included code and checks |
 | --- | --- | --- |
-| [Reservations](scenarios/01-reservations/README.md) | Capacity, hold identity, expiry, and committed-result replay | Specification and guide |
-| [Durable jobs](scenarios/02-durable-jobs/README.md) | Lease ownership, stale workers, and one authoritative result | Specification and guide |
-| [Event projections](scenarios/03-event-projections/README.md) | Ordering, versions, duplication, and deletion tombstones | Specification and guide |
-| [Payment recovery](scenarios/04-payment-recovery/README.md) | External effects, uncertain outcomes, and reconciliation | Specification and guide |
+| [Reservations](scenarios/01-reservations/README.md) | Capacity, claim identity, and committed-result replay | Starter, reference, 9 checks, incident, rubric |
+| [Durable jobs](scenarios/02-durable-jobs/README.md) | Stale workers and temporary authority | Starter, reference, queue infrastructure, 10 checks, rubric |
+| [Event projections](scenarios/03-event-projections/README.md) | Source ordering and deletion history | Starter, reference, 10 checks, delivery permutations, rubric |
+| [Payment recovery](scenarios/04-payment-recovery/README.md) | Uncertain external effects and reconciliation | Starter, reference, bank simulator, 11 checks, rubric |
 
-Each packet includes a candidate situation, environment contract, intended evidence, and an interviewer guide with multiple valid approaches. The guides are public. Separating them from the brief helps administration; secrecy is not an assessment guarantee.
+The verifier checks all **40 reference contract checks**, the precise intentional starter failures, and that each exported packet runs independently. It also checks the de Bruijn construction for twelve bounded parameter combinations.
 
-## What unrestricted AI changes
+## The 60-minute interview
 
-AI can propose the state space, invariants, experiments, prompts, implementation, and explanation. This framework assesses demonstrated performance **with AI**. It does not certify unaided expertise or the origin of every insight.
+| Minutes | Work and observable artifact |
+| --- | --- |
+| 0–5 | Read the situation, code, and contract |
+| 5–12 | Write the initial intent prompt before editing |
+| 12–22 | Ask AI to investigate; predict and reproduce one failure |
+| 22–40 | Direct a repair and check its claimed property |
+| 40–52 | Exercise an adjacent case and revise the intent prompt |
+| 52–60 | Hand over code, evidence, revised intent, and remaining limits |
 
-Effective delegation can receive full credit. If a generic agent reliably completes a scenario and saturates the rubric, that scenario has little remaining value for distinguishing candidates. Run the complete materials, including the rubric, through repeated AI-only baselines with comparable access and resources.
+One supported repair and an adjacent check form the core exercise. A production rewrite or larger feature extension is not required.
 
-See [AI interaction and evidence](docs/ai-interaction.md) and [calibration](docs/calibration.md).
+Use the [administration guide](docs/interview-process.md) and [scorecard](templates/scorecard.md).
 
-## Add a scenario
+## Rubric
 
-Use the [scenario template](templates/scenario.md) and [contribution guide](CONTRIBUTING.md). Keep the 60-minute process and six rubric dimensions stable. Add domain-specific observable examples, achievable contracts, alternative representations, and checks tied to published behavior.
+| Dimension | Inspect in the intent prompt and its revision |
+| --- | --- |
+| Problem formulation | Intended outcome, material uncertainty, and chosen scope |
+| State modeling | Identities, authoritative state, and distinctions affecting outcomes |
+| Safety and transitions | Invariants and the mutation boundary that must enforce them |
+| Constraints and progress | Environmental assumptions, recovery, and eventual outcomes |
+| Falsification and evidence | A counterexample, predicted result, and acceptance checks |
+| Revision and delivery | Evidence that changed the instruction and what remains supported |
 
-Different stories are not automatically equivalent assessments. Pilot new scenarios and record where their difficulty or evidence opportunities differ.
+Use the [common 0–3 anchors](docs/rubric.md) and each exercise's concrete rubric and named checks. N/E means insufficient evidence. Functional check results and intent ratings are recorded separately.
 
-## Next steps
+## What runs locally
 
-- Build and validate a small deterministic starter and replay harness for reservations.
-- Pilot the 60-minute format and independently score the evidence.
-- Record repeated AI-only baseline results with model and harness versions.
-- Prepare equivalent starter materials for the other scenarios.
-- Refine the anchors from observed disagreements and job-related evidence.
+MemoryStore provides serializable in-memory transactions and survives simulated worker-object restarts. Clock and Hooks make races and crash windows reproducible. The bank simulator has a separate ledger. No cloud credentials or external dependencies are required.
 
-Background principles and their limits are documented in [sources](docs/sources.md).
+These environments do not model disk loss, production databases, or arbitrary network behavior. Bounded exploration supports its stated bounds. Human pilots, AI-only baseline measurements, equivalent-difficulty claims, and hiring thresholds remain unvalidated; see [calibration](docs/calibration.md).
+
+## Extend the framework
+
+Add runnable situations that expose different modeling decisions while retaining the process and rubric. Start with [contributing](CONTRIBUTING.md), the [scenario template](templates/scenario.md), and the [baseline record](templates/ai-baseline.md).
+
+Further detail: [state-space rationale](docs/rationale.md), [AI interaction](docs/ai-interaction.md), [sources](docs/sources.md).
 
 ## License
 

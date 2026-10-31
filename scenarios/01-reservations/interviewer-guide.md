@@ -40,9 +40,9 @@ Also check that expired records do not block a fresh hold when no cleanup proces
 | Problem formulation | Resolves exact-deadline semantics and identity on replay |
 | State modeling | Distinguishes hold incarnations and durable outcomes |
 | Safety and transitions | Couples current-claim validation and authoritative mutation |
-| Liveness and recovery | Shows how abandoned capacity becomes usable |
-| Investigation and evidence | Predicts and replays a stale confirmation, then inspects promises |
-| Adaptation and delivery | Preserves terminal replay while fixing stale ownership |
+| Constraints and progress | Shows how abandoned capacity becomes usable |
+| Falsification and evidence | Predicts and replays a stale confirmation, then inspects promises |
+| Revision and delivery | Preserves terminal replay while fixing stale ownership |
 
 ## Clarifications and hints
 
@@ -52,4 +52,8 @@ Use the [common timeline](../../docs/interview-process.md). A cancellation featu
 
 ## Readiness
 
-The packet is unpiloted. A starter, deterministic harness, reference approaches, and repeated AI-only runs must be assembled before a coding session is administered.
+Run python3 interview.py verify before a session. The starter has four expected failing checks; reference.py passes all nine. Inspect the [intent example](example-intent.md) and grade with the [scenario rubric](rubric.md).
+
+The reference moves allocation into the authoritative transaction, validates the requested hold rather than a later claim on the seat, and recognizes an existing booking before rejecting expiry. test_contract.py executes the primary, adjacent, race, and bounded-history cases.
+
+The code is locally checked; human pilots and AI-only measurement remain to be performed.

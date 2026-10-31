@@ -38,9 +38,9 @@ Check abandoned work after faults cease. Fair scheduling alone does not guarante
 | Problem formulation | Defines the publication guarantee and computation boundary |
 | State modeling | Distinguishes job identity, claim identity, local beliefs, and terminal results |
 | Safety and transitions | Enforces current authority atomically at renewal and publication |
-| Liveness and recovery | Identifies reclaimability and sufficient uninterrupted authority |
-| Investigation and evidence | Predicts a stale worker's action and checks its actual rejection |
-| Adaptation and delivery | Preserves successful-publication replay while rejecting stale attempts |
+| Constraints and progress | Identifies reclaimability and sufficient uninterrupted authority |
+| Falsification and evidence | Predicts a stale worker's action and checks its actual rejection |
+| Revision and delivery | Preserves successful-publication replay while rejecting stale attempts |
 
 ## Clarifications and hints
 
@@ -50,4 +50,8 @@ Use the [common timeline](../../docs/interview-process.md). External side effect
 
 ## Readiness
 
-Specification only. No executable claim service, harness, or pilot result is included yet.
+Run python3 interview.py verify before a session. Four starter checks fail intentionally; reference.py passes all ten. Use the [intent example](example-intent.md) and [scenario rubric](rubric.md).
+
+job_base.py supplies durable submission and claim allocation. The reference guards renewal and publication with the current token, and recognizes an accepted terminal publication before checking the former lease. The adjacent crash check loses a response after a real store mutation.
+
+Code and exports are checked locally. Human pilots and AI-only measurements remain unperformed.

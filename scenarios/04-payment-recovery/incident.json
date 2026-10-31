@@ -1,0 +1,9 @@
+{
+  "fictional": true,
+  "events": [
+    {"operation": "submit", "payment_id": "P", "amount": 100, "currency": "AUD"},
+    {"operation": "bank_commits", "response": "lost"},
+    {"operation": "client_retries", "payment_id": "P"}
+  ],
+  "reported_symptom": "The customer was charged twice while the first request had been reported as failed."
+}

@@ -2,7 +2,21 @@
 
 [Catalog](../README.md) · [Interviewer guide](interviewer-guide.md)
 
-Status: scenario specification and interviewer guide. Runnable starter and harness are planned.
+Status: executable starter, reference repair, queue infrastructure, and 10 contract checks. Not hiring-piloted.
+
+## Run and administer
+
+From the repository root:
+
+~~~sh
+python3 interview.py test jobs --implementation starter
+python3 interview.py test jobs --implementation reference
+python3 interview.py export jobs --output candidate-packets/jobs
+~~~
+
+The starter intentionally fails four checks.
+
+Use the [candidate brief](CANDIDATE.md), [intent rubric](rubric.md), [interviewer guide](interviewer-guide.md), and [example intent and revision](example-intent.md). Real code: [starter](starter.py), [reference](reference.py), [queue base](job_base.py), and [checks](test_contract.py).
 
 ## Candidate situation
 
@@ -29,7 +43,7 @@ Investigate and repair the core claim and result-publication behavior. Workers m
 
 Arbitrary external side effects, cancellation, workflow dependencies, deployment, and garbage collection are excluded. A fresh claim attempt uses a fresh request identity.
 
-## Materials to prepare
+## Included environment
 
 A small claim service, worker simulator, deterministic clock, durable store, a recorded stale-publication incident, and controls for pausing workers around reads and writes.
 

@@ -1,0 +1,9 @@
+{
+  "fictional": true,
+  "events": [
+    {"entity_id": "E", "version": 8, "kind": "upsert", "value": {"preference": "new"}},
+    {"entity_id": "E", "version": 9, "kind": "delete"},
+    {"entity_id": "E", "version": 8, "kind": "upsert", "value": {"preference": "new"}}
+  ],
+  "reported_symptom": "A deleted profile reappeared after a consumer restart and replay."
+}

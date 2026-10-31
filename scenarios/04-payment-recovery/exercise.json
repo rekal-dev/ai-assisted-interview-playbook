@@ -1,0 +1,12 @@
+{
+  "name": "payments",
+  "candidate_files": ["starter.py", "payment_base.py", "bank_simulator.py", "test_contract.py", "rubric.md", "incident.json"],
+  "expected_starter_failures": [
+    "test_bank_outage_then_recovery",
+    "test_client_retry_never_double_charges",
+    "test_delayed_request_after_not_found",
+    "test_recovery_after_bank_commit_before_local_write",
+    "test_simultaneous_recovery_uses_one_bank_operation",
+    "test_timeout_preserves_unknown_outcome"
+  ]
+}
