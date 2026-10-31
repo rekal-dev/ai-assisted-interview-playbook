@@ -1,6 +1,6 @@
 {
   "name": "reservations",
-  "candidate_files": ["starter.py", "test_contract.py", "rubric.md", "incident.json"],
+  "candidate_files": ["starter.py", "test_contract.py", "incident.json"],
   "expected_starter_failures": [
     "test_bounded_histories_preserve_capacity",
     "test_committed_confirmation_replays_after_expiry",

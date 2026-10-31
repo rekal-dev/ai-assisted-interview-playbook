@@ -1,36 +1,65 @@
-# Payment recovery interview
+# Payment recovery
 
-You have 60 minutes with unrestricted AI. Read incident.json, payment_base.py, bank_simulator.py, and starter.py. Write your initial intent prompt before editing and revise it when evidence changes your model.
+The bank charged a customer, but its response never reached the payment service. The service reported failure. When the customer retried, the bank charged again. Repair the supplied submission and recovery behavior.
 
-## Situation
+**60 minutes. Unrestricted AI. Python 3.10+; standard library only.**
 
-A customer was charged twice after a timeout. In another incident the bank charged, but the local service reported failure. Repair one submission or recovery failure and check the adjacent crash window.
+## 1. Here is the code
 
-## Run
+Start with [starter.py](starter.py): `_process()` is the method to repair.
+
+[payment_base.py](payment_base.py) already stores accepted payments and provides the public API. [bank_simulator.py](bank_simulator.py) supplies a separate bank ledger and controllable failures. You do not need to build either.
+
+Also supplied: [behavior checks](test_contract.py) and the [starting incident](incident.json).
+
+In this candidate folder, run:
 
 ~~~sh
 python3 run.py
 ~~~
 
-Edit starter.py. Prepared code provides local intents and a separate bank ledger. Retain the public API, tests, and diagnostic hooks.
+Initial failures and exit code 1 are intentional.
 
-## Contract and API
+Use AI to investigate first. Choose what to ask or inspect. Capture your repair instruction below before changing `starter.py`.
 
-- Construct Service(store=store, bank=bank, hooks=None).
-- submit(payment_id, payload) accepts a logical payment; payload has positive integer amount, currency, customer.
-- Identical payment replay is stable; changed details for the same ID raise ValueError.
-- get(payment_id) returns pending, succeeded, or declined with a matching bank_reference on success. reconcile(payment_id) recovers one; recover() scans unfinished intents.
-- A payment causes at most one successful bank charge. A timeout alone is not a definitive decline.
-- Bank.charge(key, payload) permanently deduplicates the same key and payload for the bounded exercise. Conflicting reuse raises ValueError.
-- Bank.lookup(key) returns a terminal decision or None. Not found does not establish that an earlier request will never arrive.
-- The bank and local store cannot share a transaction. The bank ledger exists independently of local state.
-- Bank flags deterministically simulate unavailability, a lost committed response, and a delayed request. deliver_delayed() completes queued requests.
-- Store commits survive simulated worker-object restart. Requests and responses may be delayed or lost; recovery workers can overlap.
-- When faults cease, communication and providers recover and reconciliation is fairly scheduled. Accepted valid payments must eventually expose the matching success or definitive decline.
-- Refunds, multiple providers, finite key retention, deployment, and disk loss are excluded.
+**Entry points:** `submit(payment_id, payload)`, `get(payment_id)`, `reconcile(payment_id)`, and `recover()`. The prepared base defines signatures and receipt fields.
 
-payment_before_bank, payment_after_bank, and payment_after_persist identify the three crash boundaries. They run outside local transactions.
+Payload: `{"amount": 100, "currency": "AUD", "customer": "C"}`, with a positive integer amount. `customer="declined"` produces a bank decline. Receipt status is `pending`, `succeeded`, or `declined`.
 
-## Deliver
+## 2. What you can and cannot change
 
-Initial and revised intent, reproduced failure, repair, adjacent evidence, guarantee, and limits. Inspect the bank ledger as well as local status. Use rubric.md.
+**You can:** edit `starter.py`, add helpers, choose a compatible internal representation, and add checks in new files.
+
+**Keep fixed:** `payment_base.py`, `bank_simulator.py`, `support.py`, and `test_contract.py`, the runner, public signatures, and return shapes.
+
+Keep `payment_before_bank`, `payment_after_bank`, and `payment_after_persist` at their named boundaries, outside local transactions.
+
+**Provided guarantees and limits:**
+
+Local transactions are serializable and commits survive worker restarts. The bank ledger is separate; it cannot share a transaction with local storage.
+
+`bank.charge(key, payload)` permanently deduplicates identical key/details pairs; conflicting reuse raises `ValueError`. `lookup(key)` returns a decision or `None`. A missing record does not rule out a delayed request. Inspect charges with `bank.charges()`.
+
+Use `available`, `drop_next_response`, `delay_next_request`, and `deliver_delayed()` for deterministic failures. Workers can overlap or restart using the same store and bank. After faults stop, the bank and communication recover and recovery work is fairly scheduled. No refunds, multiple providers, conversion, fraud, expiring bank records, deployment, disk loss, or record cleanup.
+
+## 3. Expected behavior
+
+| When | Expected result |
+| --- | --- |
+| A normal payment succeeds | Return `succeeded` with the bank's matching reference. One logical payment causes at most one successful charge. |
+| A bank response is lost or the bank is unavailable | Return `pending` for that call. A timeout alone does not establish a decline or prove that no charge happened. |
+| The client retries the same payment ID and details | Continue the same payment without another successful charge. A recorded success or definitive decline returns the original receipt. Changed details for that ID raise `ValueError`. |
+| A worker crashes before the bank call, after the bank charge, or after storing the local result | A new service using the same store and bank can recover or replay the correct result. |
+| Recovery sees no bank record, then an earlier delayed request arrives | The two attempts together must still produce at most one successful charge. |
+| Two workers recover the same payment concurrently | They must not create duplicate successful charges or conflicting local outcomes. |
+| The bank gives a definitive decline | Record `declined` with no successful charge. Treat it as a completed outcome. Once faults stop and recovery runs, each accepted valid payment eventually exposes its matching success or decline. |
+
+Own one failure, repair it, and examine a related case. The full contract stays in force; report remaining failures.
+
+## 4. What to hand over
+
+1. In `intent.md`, keep the questions or instructions you chose, what you learned, and the repair instruction you gave AI before implementation edits. AI may help throughout.
+2. Deliver changed code, a failure reproduction, and actual output from the checks you ran.
+3. Revise your instruction after a related case or new evidence. Explain the guarantee, assumptions, and remaining gaps.
+
+The assessment considers your understanding, approach choice, and judgment about AI output. Explain consequential decisions briefly. Passing-check count does not set this score; correctness is recorded separately.

@@ -2,6 +2,12 @@
 
 [Candidate situation](README.md) · [Common rubric](../../docs/rubric.md)
 
+## Let the candidate lead the inquiry
+
+Use the common 60-minute sequence: orient, investigate with AI, formulate repair intent before implementation edits, repair, challenge with a related case, and hand over. Start with “What would you find out first?” Observe the candidate's chosen questions, their relevance, and use of the answers.
+
+Answer factual questions without supplying the diagnosis. Use neutral follow-ups such as “Why that question?” and “What would the answer change?” The mechanism-specific prompts below are hints when supplied before discovery; record that assistance. Make evidence notes along the way and assign rubric ratings afterward. Case-specific anchors and this guide are interviewer materials.
+
 ## Evidence opportunities
 
 Temporary authority and physical execution are distinct. A worker can continue computing after it loses the right to publish. The authoritative store must reject stale mutations.

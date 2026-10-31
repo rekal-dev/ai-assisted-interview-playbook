@@ -34,23 +34,15 @@ These decisions shape service boundaries, data ownership, idempotency, monotonic
 
 AI can assist with these decisions too. The assessment therefore needs observable work and evidence for the resulting claims.
 
-## The model changes the work
+## A timeout makes the modeling decision concrete
 
-*Cracking the Safe* asks for a shortest string containing every n-character password over an alphabet of size k.
+A customer submits a payment. The request times out, and the customer retries.
 
-One approach treats complete passwords as nodes connected when their suffix and prefix overlap. That representation suggests searching for an ordering that visits every password.
+Two different situations can produce that timeout: the request never reached the bank, or the bank charged successfully and its response was lost. Treating both situations as a definitive failure hides information needed for a safe retry.
 
-A different representation makes length n−1 strings the nodes. Each complete n-character password becomes a directed edge from its prefix to its suffix. For n = 2 and k = 2, the nodes are `0` and `1`, and the four edges are `00`, `01`, `10`, and `11`.
+The candidate needs to recognize the uncertainty, inspect the bank's guarantees, and choose a recovery approach that can resolve it. They might compare looking up the bank outcome before retrying with retrying the same bank operation directly. Either needs an explanation of which provider guarantee makes it safe and what survives a worker restart.
 
-Every node has the same number of incoming and outgoing edges, and the graph is connected in the required directed sense. An Eulerian circuit visits every edge exactly once. Reading its starting n−1 symbols and then the symbol appended by each edge constructs a shortest answer.
-
-For n = 2 and k = 2, `00110` contains `00`, `01`, `11`, and `10`. There are k**n passwords, and a string of length L has L−n+1 windows. The lower bound is therefore k**n+n−1, which this construction reaches.
-
-~~~sh
-python3 examples/state_space_demo.py --n 2 --k 2
-~~~
-
-Choosing what counts as a node and an edge exposes a traversal whose work is proportional to the output. It avoids unnecessary search. This does not mean that the node alone represents the complete solver state: the implementation also tracks consumed edges, traversal progress, and a stack.
+The assessment follows that decision: what did the candidate think was broken, which alternatives did they consider, why did they choose one, and how did that choice change the instruction to AI? A passing test supplies one observation about the outcome. The explanation and response to a related case provide evidence about understanding.
 
 ## Production tests the assumptions
 
@@ -74,7 +66,7 @@ The exercise needs room for different useful models and firm boundaries for chec
 
 ## The intent prompt makes the thinking inspectable
 
-Before editing, the candidate writes an instruction that turns the situation into directed engineering work. It captures the intended outcome, relevant context, chosen distinctions, required properties, unresolved assumptions, and acceptance evidence.
+The candidate first investigates with AI, separating required behavior and observed facts from hypotheses and unknowns. They then write the repair instruction before implementation edits. It captures the intended outcome, relevant context, chosen distinctions, required properties, approach choice, unresolved assumptions, and acceptance evidence.
 
 After new evidence, the candidate revises that instruction. The revision shows whether the model changed and why.
 
@@ -83,8 +75,8 @@ AI may help write both versions. A polished prompt can be generated from a check
 Each 60-minute packet uses the same sequence:
 
 1. Read a runnable service, contract, and incident.
-2. Capture an initial intent prompt before editing.
-3. Use AI freely to investigate and reproduce a failure.
+2. Use AI freely to investigate; record facts, hypotheses, and material unknowns.
+3. Formulate the core problem, choose an approach, and capture repair intent before implementation edits.
 4. Repair a relevant transition and check its claimed property.
 5. Exercise an adjacent case within the contract.
 6. Capture revised intent, supporting evidence, and remaining limits.

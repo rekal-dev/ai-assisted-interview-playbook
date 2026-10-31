@@ -20,8 +20,6 @@ Anthropic's [October 2026 study of its own workplace](https://www.anthropic.com/
 
 Memorizing known patterns has limited value. Learning to choose a model, understand its state space, identify invariants, reason about concurrency, and find a counterexample still matters. These are the skills behind deciding what a system remembers, who owns a resource, what a retry means, and which changes must happen together.
 
-Consider *Cracking the Safe*: construct a shortest string containing every password of length n over an alphabet of size k. Treat each password as a node and the problem suggests a difficult search over arrangements. Treat each length n−1 suffix as a node and each complete password as an edge, and an Eulerian traversal exposes a direct construction. The useful step is choosing the representation that reveals the structure.
-
 Production adds the conditions a small coding exercise can leave out: a request is retried, a response disappears after a commit, a worker resumes after losing ownership, or an older event arrives after a deletion. A plausible implementation can pass its ordinary tests and still break a safety invariant.
 
 As generating code becomes easier, more of the work moves from **construction to falsification**: finding where an apparently correct solution fails, identifying the assumption it violated, and repairing the model that allowed it. Challenging complex code can demand deeper understanding than writing a familiar solution from scratch.
@@ -30,11 +28,7 @@ That suggests two places to look for interview evidence: **problem formulation**
 
 This repository turns those ideas into **60-minute interviews with unrestricted AI**. Each exercise includes a runnable broken service, deterministic checks, a reference repair, a candidate packet, and an observable rubric. The purpose is to establish a reusable framework for assessing judgment, modeling, and directing work with AI, then extend it across different engineering situations. Python 3.10+ and the standard library are sufficient.
 
-Read [why this framework](docs/why-this-framework.md), or run the [modeling example](examples/state_space_demo.py):
-
-~~~sh
-python3 examples/state_space_demo.py --n 2 --k 2
-~~~
+Read [why this framework](docs/why-this-framework.md).
 
 ## The intent prompt is the signal
 
@@ -42,7 +36,11 @@ The candidate's **intent prompt is a first-class assessment artifact**.
 
 It expresses what the candidate thinks the problem is: which facts matter, which identities and states must be distinguished, what must remain true, what AI may assume, which trade-offs are acceptable, and what evidence would justify accepting a repair.
 
-The candidate writes [intent.md](templates/intent.md) before editing code, uses AI freely, and revises that instruction after new evidence. We score the formulation and revision against actual behavior. Fluent prose, a generic checklist, or passing test count alone does not establish a strong intent score.
+The candidate first uses AI to investigate: read the code, clarify the required behavior, and separate observations from assumptions. They then write a repair intent in [intent.md](templates/intent.md) before changing the implementation, and revise it after new evidence. The assessment follows their decisions: what they identify as the core problem, which approaches they consider, why they choose one, what they ask AI to do, and how they evaluate its output.
+
+**What the candidate chooses to ask is an early signal.** Observe which uncertainty they prioritize, why the answer matters, and how they use it. AI may suggest questions; the candidate's selection and follow-through remain observable. The interviewer scores throughout, using neutral follow-ups while leaving diagnosis and approach discovery to the candidate.
+
+Checks support that discussion. A trace, code walkthrough, or small experiment can show why an approach fits the problem. Test results are recorded separately; the number of passing tests does not set the reasoning score. A generic prompt that obtains correct code can leave the candidate's understanding unobserved.
 
 This assesses judgment, modeling, and directing engineering work with AI. AI may help formulate the prompt too; the artifact and its consequences remain observable.
 
@@ -52,18 +50,15 @@ This assesses judgment, modeling, and directing engineering work with AI. AI may
 git clone https://github.com/rekal-dev/ai-assisted-interview-playbook.git
 cd ai-assisted-interview-playbook
 
-# Verify references, expected starter failures, exports, and the modeling demo.
-python3 interview.py verify
-
 # Export a self-contained candidate packet.
 python3 interview.py export reservations --output candidate-packets/reservations
 cd candidate-packets/reservations
 python3 run.py
 ~~~
 
-The starter intentionally fails checks and returns exit code 1. The candidate repairs starter.py while retaining the API and harness. Each packet contains a concrete situation, incident, code, contract tests, deterministic failure controls, intent worksheet, rubric, and standalone run.py.
+The starter intentionally fails checks and returns exit code 1. The candidate repairs starter.py while retaining the API and harness. Each packet contains a concrete situation, incident, code, contract tests, deterministic failure controls, neutral intent worksheet, broad assessment criteria, and standalone run.py.
 
-Reference repairs and interviewer guides are omitted from exports. They are public in this repository; export is a distribution convenience, not a secrecy guarantee.
+Reference repairs, case-specific rubric anchors, example prompts, and interviewer guides are omitted from exports. They are public in this repository; export is a distribution convenience, not a secrecy guarantee.
 
 From the repository root:
 
@@ -85,20 +80,22 @@ python3 interview.py test payments --implementation reference
 | [Event projections](scenarios/03-event-projections/README.md) | Source ordering and deletion history | Starter, reference, 10 checks, delivery permutations, rubric |
 | [Payment recovery](scenarios/04-payment-recovery/README.md) | Uncertain external effects and reconciliation | Starter, reference, bank simulator, 11 checks, rubric |
 
-The verifier checks all **40 reference contract checks**, the precise intentional starter failures, and that each exported packet runs independently. It also checks the de Bruijn construction for twelve bounded parameter combinations.
+Each scenario opens with the code, what may change, what must stay fixed, expected behavior, and the handoff. The candidate chooses how to diagnose the problem and approach the repair.
+
+For interviewers, `python3 interview.py verify` checks the supplied references, intentional starter failures, and exports. It is a maintenance check for the exercise materials; it does not score a candidate.
 
 ## The 60-minute interview
 
 | Minutes | Work and observable artifact |
 | --- | --- |
-| 0–5 | Read the situation, code, and contract |
-| 5–12 | Write the initial intent prompt before editing |
-| 12–22 | Ask AI to investigate; predict and reproduce one failure |
-| 22–40 | Direct a repair and check its claimed property |
+| 0–5 | Read the task, fixed boundaries, and expected behavior |
+| 5–15 | Investigate with AI; distinguish facts, requirements, hypotheses, and unknowns |
+| 15–23 | Frame the core problem, compare approaches, and write repair intent before implementation edits |
+| 23–40 | Direct a repair and assess AI's proposal against the chosen model |
 | 40–52 | Exercise an adjacent case and revise the intent prompt |
 | 52–60 | Hand over code, evidence, revised intent, and remaining limits |
 
-One supported repair and an adjacent check form the core exercise. A production rewrite or larger feature extension is not required.
+Fact-finding comes before the repair instruction. It need not resolve every uncertainty: the candidate should identify which unknowns matter and what would change the approach. One scoped repair and a related case form the practical exercise.
 
 Use the [administration guide](docs/interview-process.md) and [scorecard](templates/scorecard.md).
 
@@ -106,14 +103,16 @@ Use the [administration guide](docs/interview-process.md) and [scorecard](templa
 
 | Dimension | Inspect in the intent prompt and its revision |
 | --- | --- |
-| Problem formulation | Intended outcome, material uncertainty, and chosen scope |
-| State modeling | Identities, authoritative state, and distinctions affecting outcomes |
-| Safety and transitions | Invariants and the mutation boundary that must enforce them |
+| Problem formulation | Core problem behind the symptom, intended outcome, material uncertainty, and scope |
+| State modeling | Useful distinctions, plausible approaches, and the reason for the chosen model |
+| Safety and transitions | Why the chosen change preserves the required promise at the relevant boundary |
 | Constraints and progress | Environmental assumptions, recovery, and eventual outcomes |
-| Falsification and evidence | A counterexample, predicted result, and acceptance checks |
-| Revision and delivery | Evidence that changed the instruction and what remains supported |
+| Falsification and evidence | A predicted case that distinguishes competing explanations or approaches |
+| Revision and delivery | How the candidate evaluates AI output, changes direction, and explains remaining limits |
 
 Use the [common 0–3 anchors](docs/rubric.md) and each exercise's concrete rubric and named checks. N/E means insufficient evidence. Functional check results and intent ratings are recorded separately.
+
+Share the broad criteria with the candidate. Use diagnosis-specific anchors for observation and scoring; introducing one early is an interviewer hint and should be recorded. Useful neutral probes are “What would you find out next?”, “Why that question?”, and “What would the answer change?”
 
 ## What runs locally
 

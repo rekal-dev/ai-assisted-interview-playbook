@@ -1,37 +1,61 @@
-# Durable jobs interview
+# Durable jobs
 
-You have 60 minutes with unrestricted AI. Read incident.json, job_base.py, and starter.py. Write your initial intent prompt in intent.md before editing, then revise it after evidence.
+A worker paused while processing a job. Its claim expired, another worker took over, and the first worker then published a stale result. Repair the supplied service so only authorized work becomes the recorded result.
 
-## Situation
+**60 minutes. Unrestricted AI. Python 3.10+; standard library only.**
 
-A job worker paused, lost its lease, and later published after another worker took over. Jobs should remain recoverable when workers disappear.
+## 1. Here is the code
 
-Repair one ownership failure and check a related replay or recovery case. Worker computations may overlap; the guarantee concerns one authoritative published result.
+Start with [starter.py](starter.py): `renew()` and `publish()` are the methods to repair.
 
-## Run
+[job_base.py](job_base.py) already provides submission, job claiming, result reads, and durable storage setup. Read it as needed; you do not need to build a queue.
+
+Also supplied: [behavior checks](test_contract.py) and the [starting incident](incident.json).
+
+In this candidate folder, run:
 
 ~~~sh
 python3 run.py
 ~~~
 
-Edit starter.py. job_base.py provides queue infrastructure. Retain the API, tests, and diagnostics; record any remaining failures.
+Initial failures and exit code 1 are intentional.
 
-## Contract and API
+Use AI to investigate first. Choose what to ask or inspect. Capture your repair instruction below before changing `starter.py`.
 
-- Construct Service(store, clock, hooks=None).
-- submit(job_id, payload) creates one logical job. Identical replay is stable; conflicting input raises ValueError.
-- claim(worker_id, request_id) returns job_id, token, expires_at, or None. Each ownership period has a distinct token. Replaying a request repeats its outcome and deadline; a fresh attempt needs a fresh ID.
-- Claims expire after thirty virtual units. Equality with the deadline means expired. A stale worker does not physically stop.
-- renew(job_id, token, request_id) returns an accepted flag and, on success, a new deadline. Only the current unexpired claim can renew. Replaying a renewal cannot extend it again.
-- publish(job_id, token, result) returns True only for a valid new publication or exact replay of its accepted publication. A conflicting later result returns False.
-- A terminal result is durable and immutable. Replay can succeed after the former lease expires.
-- result(job_id) and status(job_id) expose durable outcome. Use non-None results.
-- Transactions are serializable. Store data survives worker-object restart.
-- Once faults cease, work is fairly scheduled and eventually a worker has enough valid authority, including renewals, to finish.
-- External side effects, cancellation, deployment, and disk loss are excluded.
+**Entry points:** `submit`, `claim`, `renew`, `publish`, `result`, and `status`. Signatures and receipt fields are in the linked Python files.
 
-publication_after_persist allows a simulated crash after a committed result.
+## 2. What you can and cannot change
 
-## Deliver
+**You can:** edit `starter.py`, add helpers, choose a compatible internal representation, and add checks in new files.
 
-Initial and revised intent, a replay of the failure, a scoped repair, adjacent check output, and supported assumptions. Use rubric.md; code checks do not automatically determine intent ratings.
+**Keep fixed:** `job_base.py`, `support.py`, and `test_contract.py`, the runner, public signatures, and return shapes.
+
+Keep `publication_after_persist` after the publication decision commits, outside its transaction.
+
+**Provided guarantees and limits:**
+
+The store supports serializable atomic changes and retains commits across worker restarts. One monotonic virtual clock controls 30-unit claims; equality with a deadline means expired. Workers may pause, crash, resume, or retry after lost responses. Expiry does not stop computation.
+
+Inputs are immutable; computations may overlap but have no external side effects. Use non-`None` results. Request receipts persist throughout the exercise. After faults stop, assume fair scheduling, available storage, and a worker with enough claim time, including renewals, to finish. No cancellation, workflow dependencies, deployment, disk loss, or record cleanup.
+
+## 3. Expected behavior
+
+| When | Expected result |
+| --- | --- |
+| A job or successful claim request is repeated | Refer to the same job or return the original claim token and deadline. Replaying a claim never extends its lifetime. A fresh attempt needs a fresh request ID. |
+| A claim expires before its job finishes | Another worker can claim the job with a different token. |
+| A: claim at time 0; B: claim at time 31; A: publish or renew | Reject A's stale publication and renewal. B's current, unexpired claim can publish or renew. |
+| An unknown token attempts to publish | Return `False`; leave the job's result unchanged. |
+| A valid claim renews | Extend its deadline by 30 units from the current time. Repeating that renewal request returns the original outcome without extending it again. Expired claims cannot renew. |
+| A result was accepted but its response was lost | Its exact replay returns `True`, even after restart or expiry. The recorded result stays unchanged; a conflicting later result returns `False`. |
+| A job has a recorded result | It is `done` and cannot be claimed again. |
+
+Own one failure, repair it, and examine a related case. The full contract stays in force; report remaining failures.
+
+## 4. What to hand over
+
+1. In `intent.md`, keep the questions or instructions you chose, what you learned, and the repair instruction you gave AI before implementation edits. AI may help throughout.
+2. Deliver changed code, a failure reproduction, and actual output from the checks you ran.
+3. Revise your instruction after a related case or new evidence. Explain the guarantee, assumptions, and remaining gaps.
+
+The assessment considers your understanding, approach choice, and judgment about AI output. Explain consequential decisions briefly. Passing-check count does not set this score; correctness is recorded separately.

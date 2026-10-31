@@ -1,6 +1,8 @@
 # Example intent and revision
 
-## Initial instruction
+Interviewer reference after initial investigation. The candidate chooses the inquiry and wording; this is one possible repair instruction and revision.
+
+## Repair instruction after initial investigation
 
 Own stale publication after worker takeover. The job is stable but authority changes with each claim. An expired worker may keep computing; the store must reject its publication or renewal. Use current token and deadline at the authoritative mutation. Preserve immutable job input and one terminal published result.
 

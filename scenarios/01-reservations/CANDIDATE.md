@@ -1,36 +1,59 @@
-# Reservation service interview
+# Reservations
 
-You have 60 minutes and may use AI throughout. Read incident.json and the code. Before editing, write the intent prompt you would give your AI collaborator in intent.md. Revise it after new evidence.
+Customers hold a seat for 30 virtual time units before booking it. A delayed confirmation has booked a seat that was already reassigned to someone else. Repair the supplied service.
 
-## Situation
+**60 minutes. Unrestricted AI. Python 3.10+; standard library only.**
 
-The service holds a seat temporarily, then confirms it. Customers retry and workers restart. An old confirmation appeared to succeed after its seat had been reassigned.
+## 1. Here is the code
 
-Own one failure, reproduce it, repair its transition, and check a related case. Preserve the public API and provided diagnostics.
+Start with [starter.py](starter.py): `hold()` and `confirm()` contain the behavior to investigate.
 
-## Run
+Also supplied: [behavior checks](test_contract.py) and the [starting incident](incident.json).
+
+In this candidate folder, run:
 
 ~~~sh
 python3 run.py
 ~~~
 
-Failures in starter.py are intentional. Edit starter.py and rerun. Keep tests, support.py, and hooks intact. Your handoff states which failures remain.
+Initial failures and exit code 1 are intentional.
 
-## Contract and API
+Use AI to investigate first. Choose what to ask or inspect. Capture your repair instruction below before changing `starter.py`.
 
-- Construct Service(store, clock, capacity=10, hooks=None).
-- hold(request_id) returns a held receipt with hold_id, seat_id, expires_at, or no_capacity.
-- The same request ID returns its original receipt forever in this exercise, including rejection. It cannot renew a hold. A new attempt uses a new ID.
-- confirm(hold_id) returns booked, expired, or unknown. A new confirmation requires that exact hold to be valid. Equality with its thirty-unit deadline means expired.
-- A successful booking permanently reserves the seat. Replaying its confirmation returns the original booking even after response loss, restart, or the former deadline.
-- bookings() reports committed promises; available() reports genuinely free capacity.
-- MemoryStore.atomic is serializable. Its data survives a simulated worker-object restart; local values do not.
-- Clock is authoritative and monotonic. Tests advance it between atomic actions.
-- Concurrent calls, pauses, duplicates, and response loss are permitted. Abandoned expired holds must not strand capacity after recovery.
-- Payment, cancellations, deployment, disk loss, and garbage collection are out of scope.
+**Entry points:** `hold(request_id)`, `confirm(hold_id)`, `bookings()`, and `available()`. Constructor and receipt fields are in `starter.py`.
 
-The hold_before_commit and confirm_before_commit hooks are diagnostic boundaries outside the final authoritative transaction. confirmation_after_persist simulates losing a reply after a commit.
+## 2. What you can and cannot change
 
-## Deliver
+**You can:** edit `starter.py`, add helpers, choose a compatible internal representation, and add checks in new files.
 
-Your initial and revised intent, code, reproduced failure, adjacent check output, supported property, and limits. Use rubric.md. Passing checks and the quality of your intent are assessed separately.
+**Keep fixed:** `support.py` and `test_contract.py`, the runner, public signatures, and return shapes.
+
+Keep `hold_before_commit` and `confirm_before_commit` outside the final transaction, and `confirmation_after_persist` after the booking commits.
+
+**Provided guarantees and limits:**
+
+The store supports serializable atomic changes and retains commits across worker restarts. One monotonic virtual clock advances between atomic actions. Calls can overlap, be delayed, or repeat after lost responses.
+
+Request IDs and outcomes persist throughout the exercise. After faults stop, workers and storage are available and work is fairly scheduled. No payments, cancellations, refunds, authentication, deployment, disk loss, or record cleanup.
+
+## 3. Expected behavior
+
+| When | Expected result |
+| --- | --- |
+| A seat is free | `hold()` reserves one seat for 30 time units. Active holds and bookings together never exceed capacity or promise the same seat to different holds. |
+| Two requests compete for the last seat | Only one receives a successful hold. |
+| The same hold request is repeated | Return its original receipt, including a rejection. Do not create another hold or extend its deadline. A fresh attempt needs a fresh request ID. |
+| A hold reaches its deadline | It is expired, including at exact equality. Its seat can be reused without a cleanup worker. |
+| A: hold at time 0; B: hold at time 31; A: confirm, with capacity 1 | A returns `expired`; B can book. A cannot use B's newer hold. |
+| A booking committed but its response was lost | Repeating that confirmation returns the original booking, even after restart or the old hold deadline. A booking keeps its seat permanently. |
+| The hold ID is unknown | Return `unknown` without booking a seat. |
+
+Own one failure, repair it, and examine a related case. The full contract stays in force; report remaining failures.
+
+## 4. What to hand over
+
+1. In `intent.md`, keep the questions or instructions you chose, what you learned, and the repair instruction you gave AI before implementation edits. AI may help throughout.
+2. Deliver changed code, a failure reproduction, and actual output from the checks you ran.
+3. Revise your instruction after a related case or new evidence. Explain the guarantee, assumptions, and remaining gaps.
+
+The assessment considers your understanding, approach choice, and judgment about AI output. Explain consequential decisions briefly. Passing-check count does not set this score; correctness is recorded separately.

@@ -1,38 +1,66 @@
-# Event projection interview
+# Event projections
 
-You have 60 minutes and unrestricted AI. Read incident.json and starter.py. Capture the instruction you would give AI in intent.md before editing, then revise it after new evidence.
+A service builds customer profiles from source events. Events arrive more than once and out of order. Deleted profiles have reappeared, and older updates have overwritten newer values. Repair the supplied consumer.
 
-## Situation
+**60 minutes. Unrestricted AI. Python 3.10+; standard library only.**
 
-A customer-profile projection receives duplicate and out-of-order source events. Deleted profiles have reappeared after replay, and concurrent consumers have sometimes regressed visible values.
+## 1. Here is the code
 
-Reproduce one failure, repair the acceptance transition, and check a related case.
+Start with [starter.py](starter.py): `apply()` accepts incoming events; `get()` and `version()` expose the stored result.
 
-## Run
+Also supplied: [behavior checks](test_contract.py) and the [starting incident](incident.json).
+
+In this candidate folder, run:
 
 ~~~sh
 python3 run.py
 ~~~
 
-Edit starter.py. Preserve the API, tests, and diagnostic hook. Report remaining failures.
+Initial failures and exit code 1 are intentional.
 
-## Contract and API
+Use AI to investigate first. Choose what to ask or inspect. Capture your repair instruction below before changing `starter.py`.
 
-- Construct Service(store, hooks=None).
-- apply(event) accepts a newer source fact and returns True; ignored older or duplicate facts return False.
-- Each event has entity_id, positive version, kind, and, for upsert, a complete value. kind is upsert or delete.
-- One authoritative source assigns increasing versions per entity. Different entities have independent version orders. IDs are not reused with reset versions.
-- The same entity and version always have identical content. Events are complete snapshots, not partial deltas.
-- get(entity_id) returns a version and value for a visible profile, otherwise None.
-- version(entity_id) reports the last accepted source version even when the profile is deleted.
-- Once version v is accepted, later reads cannot regress below it. A deletion hides the profile; an older snapshot cannot revive it. A newer snapshot may recreate it.
-- MemoryStore provides serializable atomic mutations and survives simulated consumer-object restart.
-- Delivery order and timestamps are not source order. Concurrent calls, duplicates, reordering, lost acknowledgments, and restart are permitted.
-- After faults cease and the finite event set is delivered and processed fairly, the projection converges to its highest source version.
-- Partial deltas, multiple writers, cross-entity transactions, garbage collection, and deployment are excluded.
+**API:** `apply(event)` returns an acceptance flag; `get(entity_id)` returns `{"version": ..., "value": ...}` or `None`; `version(entity_id)` returns the last accepted version or `None`.
 
-projection_before_commit is a diagnostic pause outside the final authoritative transaction.
+Events have these shapes:
 
-## Deliver
+~~~python
+{"entity_id": "E", "version": 8, "kind": "upsert", "value": {"preference": "new"}}
+{"entity_id": "E", "version": 9, "kind": "delete"}
+~~~
 
-Initial and revised intent, a failing history, repair, related check output, supported property, and limits. Use rubric.md.
+## 2. What you can and cannot change
+
+**You can:** edit `starter.py`, add helpers, choose a compatible internal representation, and add checks in new files.
+
+**Keep fixed:** `support.py` and `test_contract.py`, the runner, public signatures, and return shapes.
+
+Keep `projection_before_commit(version=...)` outside and before the final acceptance transaction.
+
+**Provided guarantees and limits:**
+
+One source assigns increasing positive versions per entity; versions across entities are independent. Existing entity IDs never reset their versions. Events are complete snapshots or deletions; equal entity/version pairs have identical content. Arrival time is not source order.
+
+The store supports serializable atomic changes, authoritative reads, and retained commits across restarts. Consumers may overlap; delivery may repeat, reorder, or lose acknowledgments. After faults stop, the finite event set is delivered and processed fairly. No partial updates, independent writers, cross-entity transactions, schema migration, deployment, disk loss, or record cleanup.
+
+## 3. Expected behavior
+
+| When | Expected result |
+| --- | --- |
+| Snapshot version 8 arrives, then version 7 | Keep version 8 and its value; return `False` for version 7. |
+| An event is delivered again | Return `False` and leave the profile unchanged. |
+| A deletion at version 9 arrives | `get()` returns `None`; `version()` still returns 9. |
+| Snapshot 8 arrives after deletion 9, including after restart | Keep the profile deleted at version 9. |
+| Snapshot 10 arrives after deletion 9 | Accept it and expose the new profile at version 10. |
+| Consumers process versions 7 and 8 concurrently | Once version 8 is accepted, version 7 cannot overwrite it. |
+| Entity A reaches version 100 and B receives version 1 | Accept B's event independently of A's version. |
+
+Own one failure, repair it, and examine a related case. The full contract stays in force; report remaining failures.
+
+## 4. What to hand over
+
+1. In `intent.md`, keep the questions or instructions you chose, what you learned, and the repair instruction you gave AI before implementation edits. AI may help throughout.
+2. Deliver changed code, a failure reproduction, and actual output from the checks you ran.
+3. Revise your instruction after a related case or new evidence. Explain the guarantee, assumptions, and remaining gaps.
+
+The assessment considers your understanding, approach choice, and judgment about AI output. Explain consequential decisions briefly. Passing-check count does not set this score; correctness is recorded separately.

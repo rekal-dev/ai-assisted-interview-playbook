@@ -19,11 +19,17 @@ Each scenario includes:
 
 Add the scenario to interview.py and the catalog. Use the existing files as an executable template. Keep dependencies in the standard library and avoid cloud setup.
 
+Write both the scenario README and exported candidate brief in this order: code to open and run, editable and fixed parts, expected behavior, and handoff. Put administration, reference answers, and assessment guidance after the brief or in the interviewer guide. State the contract in ordinary behavior terms and leave the diagnosis and approach to the candidate.
+
+Keep candidate worksheets neutral and omit worked prompts, references, case-specific rubric anchors, and guides from candidate_files. Share broad criteria. The candidate chooses what to ask; the assessor records why that question matters and how its answer affects the work. Diagnosis-specific prompts supplied early count as recorded hints.
+
 ## Contract and comparison
 
-Keep the 60-minute core: initial intent, one failure, one supported repair, adjacent evidence, revised intent, and handoff. Publish identities, replay behavior, time boundaries, storage guarantees, and progress assumptions.
+Keep the 60-minute core: AI-assisted fact-finding, problem formulation and approach choice, repair intent before implementation edits, one scoped repair, related-case evidence, revised intent, and handoff. Publish identities, replay behavior, time boundaries, storage guarantees, and progress assumptions.
 
 Preserve the six intent dimensions. Accept equivalent representations and legal outcomes. A specific schema, vendor, vocabulary, or obscure trick must not be the only path to a strong rating.
+
+Make core-problem understanding, approach choice, and judgment about AI output observable. Give a probe that elicits a causal explanation and a meaningful trade-off. Use checks as supporting evidence and record correctness separately; a passing-check count must not set a reasoning rating.
 
 Hooks are diagnostic boundaries outside authoritative transactions. Keep their names and documented context stable so failures remain reproducible.
 

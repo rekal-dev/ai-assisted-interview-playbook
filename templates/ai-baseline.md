@@ -9,8 +9,10 @@
 - Tools and files available:
 - Access to complete rubric and guides:
 - Factual clarification channel:
-- Initial instruction:
-- Initial intent artifact:
+- Investigation instruction:
+- Questions prioritized and use of the answers:
+- Fact notes: requirements, observations, hypotheses, and unknowns:
+- Repair intent after investigation and before implementation edits:
 - Revised intent after evidence:
 
 ## Results
@@ -18,6 +20,9 @@
 - Elapsed time:
 - Original failure reproduced:
 - Delivered artifact:
+- Core problem identified:
+- Chosen approach, relevant alternative, and reason:
+- Evaluation of proposed changes:
 - Checks proposed:
 - Checks actually executed and their results:
 - Adjacent failure case:

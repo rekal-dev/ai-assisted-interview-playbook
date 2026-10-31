@@ -1,6 +1,6 @@
 {
   "name": "payments",
-  "candidate_files": ["starter.py", "payment_base.py", "bank_simulator.py", "test_contract.py", "rubric.md", "incident.json"],
+  "candidate_files": ["starter.py", "payment_base.py", "bank_simulator.py", "test_contract.py", "incident.json"],
   "expected_starter_failures": [
     "test_bank_outage_then_recovery",
     "test_client_retry_never_double_charges",

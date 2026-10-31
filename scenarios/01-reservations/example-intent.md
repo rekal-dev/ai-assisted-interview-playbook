@@ -1,8 +1,8 @@
 # Example intent and revision
 
-This is interviewer reference material, not a required wording.
+Interviewer reference after initial investigation. The candidate chooses the inquiry and wording; this is one possible repair instruction and revision.
 
-## Initial instruction
+## Repair instruction after initial investigation
 
 Investigate the reported old confirmation without redesigning the API. Model resource identity, a particular hold, its deadline, and a committed booking separately. A customer's live hold or booking consumes one unit; successful promises must not exceed capacity. Inspect where those facts are checked and changed.
 

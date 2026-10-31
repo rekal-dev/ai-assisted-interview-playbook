@@ -13,7 +13,9 @@ All four packets use the [60-minute process](../docs/interview-process.md), [six
 
 The four packets vary the modeling boundary and failure mechanism while retaining the same assessment structure.
 
-All four packets include runnable starters, reference repairs, deterministic contract checks, incidents, intent worksheets, and scenario rubrics. Run python3 interview.py verify, then export a self-contained packet.
+Each scenario starts with code, editable and fixed parts, expected behavior, and handoff. The rubric focuses on understanding the core problem, choosing an approach, and directing AI; test results provide supporting evidence and are recorded separately.
+
+All four scenario folders include runnable starters, reference repairs, deterministic contract checks, incidents, intent worksheets, and scenario rubrics. Candidate exports contain the task, code, checks, incident, and neutral worksheet; references, worked prompts, case-specific rubric anchors, and guides stay with the interviewer.
 
 Human pilot and AI-only baseline results are not yet included.
 

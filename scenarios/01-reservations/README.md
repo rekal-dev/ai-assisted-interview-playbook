@@ -1,60 +1,74 @@
 # Reservations
 
-[Catalog](../README.md) · [Interviewer guide](interviewer-guide.md)
+Customers hold a seat for 30 virtual time units before booking it. A delayed confirmation has booked a seat that was already reassigned to someone else. Repair the supplied service.
 
-Status: executable starter, reference repair, and 9 contract checks. Not hiring-piloted.
+**60 minutes. Unrestricted AI. Python 3.10+; standard library only.**
 
-## Run and administer
+## 1. Here is the code
+
+Start with [starter.py](starter.py): `hold()` and `confirm()` contain the behavior to investigate.
+
+Also supplied: [behavior checks](test_contract.py) and the [starting incident](incident.json).
+
+From the repository root, run:
+
+~~~sh
+python3 interview.py test reservations --implementation starter
+~~~
+
+Initial failures and exit code 1 are intentional.
+
+Use AI to investigate first. Choose what to ask or inspect. Capture your repair instruction below before changing `starter.py`.
+
+**Entry points:** `hold(request_id)`, `confirm(hold_id)`, `bookings()`, and `available()`. Constructor and receipt fields are in `starter.py`.
+
+## 2. What you can and cannot change
+
+**You can:** edit `starter.py`, add helpers, choose a compatible internal representation, and add checks in new files.
+
+**Keep fixed:** `support.py` and `test_contract.py`, the runner, public signatures, and return shapes.
+
+Keep `hold_before_commit` and `confirm_before_commit` outside the final transaction, and `confirmation_after_persist` after the booking commits.
+
+**Provided guarantees and limits:**
+
+The store supports serializable atomic changes and retains commits across worker restarts. One monotonic virtual clock advances between atomic actions. Calls can overlap, be delayed, or repeat after lost responses.
+
+Request IDs and outcomes persist throughout the exercise. After faults stop, workers and storage are available and work is fairly scheduled. No payments, cancellations, refunds, authentication, deployment, disk loss, or record cleanup.
+
+## 3. Expected behavior
+
+| When | Expected result |
+| --- | --- |
+| A seat is free | `hold()` reserves one seat for 30 time units. Active holds and bookings together never exceed capacity or promise the same seat to different holds. |
+| Two requests compete for the last seat | Only one receives a successful hold. |
+| The same hold request is repeated | Return its original receipt, including a rejection. Do not create another hold or extend its deadline. A fresh attempt needs a fresh request ID. |
+| A hold reaches its deadline | It is expired, including at exact equality. Its seat can be reused without a cleanup worker. |
+| A: hold at time 0; B: hold at time 31; A: confirm, with capacity 1 | A returns `expired`; B can book. A cannot use B's newer hold. |
+| A booking committed but its response was lost | Repeating that confirmation returns the original booking, even after restart or the old hold deadline. A booking keeps its seat permanently. |
+| The hold ID is unknown | Return `unknown` without booking a seat. |
+
+Own one failure, repair it, and examine a related case. The full contract stays in force; report remaining failures.
+
+## 4. What to hand over
+
+1. In [intent.md](../../templates/intent.md), keep the questions or instructions you chose, what you learned, and the repair instruction you gave AI before implementation edits. AI may help throughout.
+2. Deliver changed code, a failure reproduction, and actual output from the checks you ran.
+3. Revise your instruction after a related case or new evidence. Explain the guarantee, assumptions, and remaining gaps.
+
+The assessment considers your understanding, approach choice, and judgment about AI output. Explain consequential decisions briefly. Passing-check count does not set this score; correctness is recorded separately.
+
+## For interviewers
+
+Use the [60-minute process](../../docs/interview-process.md), [interviewer guide](interviewer-guide.md), [scenario rubric](rubric.md), and [example intent and revision](example-intent.md).
 
 From the repository root:
 
 ~~~sh
-python3 interview.py test reservations --implementation starter
 python3 interview.py test reservations --implementation reference
 python3 interview.py export reservations --output candidate-packets/reservations
 ~~~
 
-The starter intentionally fails four checks. Give the exported packet to the candidate.
+Give the exported folder to the candidate. Its README contains the same brief with standalone run instructions. It includes the code, checks, incident, and neutral intent worksheet. The [reference repair](reference.py), case-specific rubric, example intent, and interviewer guide remain outside the export.
 
-Use the [candidate brief](CANDIDATE.md), [intent rubric](rubric.md), [interviewer guide](interviewer-guide.md), and [example intent and revision](example-intent.md). Real code: [starter](starter.py), [reference](reference.py), and [checks](test_contract.py).
-
-## Candidate situation
-
-A service manages a configurable pool of seats, initially ten. Customers obtain temporary holds and confirm them. During retries and worker failures, customers occasionally receive incompatible successful promises. Operations also report no availability after unconfirmed holds have expired.
-
-Investigate a small supplied implementation and its incident material. Reproduce one failure, repair its relevant transition, check a related case, and explain the resulting guarantee. AI is available throughout.
-
-## Environment contract
-
-| Area | Behavior |
-| --- | --- |
-| Hold | A successful hold reserves one unit and returns a hold identity and deadline thirty virtual time units later. |
-| Request replay | A repeated hold request ID returns its original result, including no-capacity rejection. It creates no new hold and does not extend expiry. A fresh attempt uses a fresh ID. |
-| Confirmation | A new confirmation succeeds only for its identified valid hold at the atomic decision point. Equality with the deadline means expired. |
-| Confirmation replay | A previously successful confirmation returns its original booking result after response loss, restart, or passage of its former hold deadline. |
-| Expired hold | An unsuccessful expired hold cannot be confirmed or revived. Its capacity can be reused. |
-| Capacity | Confirmed bookings and valid unconfirmed holds reserve capacity. A booking permanently consumes one unit in the base exercise. |
-| Store | Serializable atomic transactions are available. Durable commits survive worker restart. |
-| Time | One authoritative monotonic virtual clock; no advance inside an atomic simulator action. |
-| Failure | Concurrent requests, delayed duplicates, lost responses, stale paused workers, and worker crashes are permitted. |
-| Progress | After faults cease, a worker and the store are available and work is fairly scheduled. Expired holds must not indefinitely block genuinely free capacity. |
-| Retention | Identities and results persist for the full bounded exercise. |
-
-No payments, cancellations, refunds, authentication, deployment, or garbage collection are included.
-
-## Included environment
-
-- A small incorrect service and a request history.
-- Atomic store and virtual clock documentation.
-- Replay controls for pause, restart, duplicate delivery, and response loss.
-- A public successful booking example and property checks over observable promises.
-
-## Published failure categories
-
-Competition for final capacity; repeated hold requests; stale confirmations after reassignment; replay after a committed result; and expiry with no cleanup worker.
-
-## Required result
-
-Follow the [60-minute process](../../docs/interview-process.md). Deliver a working model, one failing replay of the original, a repair, a related regression result, and a handoff identifying assumptions and remaining uncertainty.
-
-Representation is open. Expiry may be derived, and a stored Expired status or cleanup worker is not required.
+Status: executable starter and reference; 9 contract checks. Human pilots and AI-only baseline measurements remain unperformed.

@@ -1,63 +1,59 @@
 # Scenario title
 
-Status: specification, starter available, harness checked, or piloted. State only what exists.
+Describe the service, one concrete symptom, and the requested outcome in two or three sentences. Use ordinary engineering language. Leave the diagnosis and approach to the candidate.
 
-## Candidate situation
+State the time limit, allowed AI use, language version, and dependencies. The default is 60 minutes, unrestricted AI, and Python 3.10+ with the standard library.
 
-Describe the system, a concrete observed failure, and the requested outcome in business terms. Avoid prescribing the internal representation.
+## 1. Here is the code
 
-## Scope and 60 minute result
+Link directly to the editable starter and identify the methods to investigate. Link to the supplied checks and incident. Describe any prepared infrastructure in one sentence.
 
-Define one failure to reproduce, one relevant transition to repair, one adjacent check, and a concise handoff. State explicit exclusions.
+Give the actual run command and explain that initial failures are intentional. Use repository-root commands in the scenario README and standalone commands in CANDIDATE.md, which becomes the exported README.
 
-## Environment contract
-
-| Area | Supplied guarantee or requirement |
+| API to keep | Result |
 | --- | --- |
-| Identities and replay | |
-| Authoritative state | |
-| Storage and atomicity | |
-| Time and ordering | |
-| Permitted failures | |
-| Progress assumptions | |
-| Resource or workload bounds | |
+| List the public constructor and methods | State return shapes and relevant errors |
 
-All material facts must be available to the candidate and AI tools. Distinguish missing facts from negotiable requirements.
+Include a small input example if its shape is not obvious.
 
-## Materials to prepare
+## 2. What you can and cannot change
 
-List starter code, incident material, simulator facilities, public checks, and common evaluation cases. Give actual run commands only when implementations exist.
+Name the editable file, permitted helpers, and any freedom to change the internal representation. List the fixed files, API, checks, and diagnostic boundaries explicitly.
 
-For a take-and-use packet, include starter.py, reference.py, test_contract.py,
-exercise.json, incident.json, CANDIDATE.md, rubric.md, and interviewer-guide.md.
-List candidate_files and exact expected_starter_failures in exercise.json.
-Add the slug to interview.py and run its verify command. Include example-intent.md
-for interviewers and the shared intent.md worksheet in candidate exports.
+Publish the facts needed to reason about the task: identity and replay rules, authoritative state, atomicity, durability, time or ordering, permitted failures, progress assumptions, and workload bounds. State exclusions. All material facts must be available to the candidate and AI tools.
 
-The candidate writes initial intent before editing, then revises it after evidence.
-Score that formulation explicitly; record functional check results separately.
+Do not prescribe a particular schema, algorithm, or repair in this section.
 
-## Published failure categories
+## 3. Expected behavior
 
-Describe permitted failure categories. Evaluation cases must remain within this contract.
+| When | Expected result |
+| --- | --- |
+| Give a concrete sequence from the incident | Describe the externally observable result |
+| Give a related retry, restart, or concurrency case | State which promise still holds |
+| Give a legitimate outcome a narrow patch might block | State the progress or replay requirement |
 
-## Candidate deliverables
+Keep all evaluation cases inside the published contract. For the 60-minute session, agree one failure to own, one repair, and a related case. State that remaining failures must be reported.
 
-- Working state and transition model.
-- Reproducible original failure.
-- Repair and checks actually executed.
-- Supported guarantee, assumptions, and remaining limitations.
+## 4. What to hand over
 
-## Interviewer guide
+1. Brief investigation notes: the candidate's chosen questions or requests to AI, what they learned, and what changed as a result. Keep the supplied worksheet neutral.
+2. Repair intent after investigating and before implementation edits: the core problem, chosen approach, a meaningful alternative or trade-off, and the instruction to AI.
+3. Changed code, a reproduction of the original failure, actual check output for the owned scope, and revised intent after evidence. Explain the guarantee, assumptions, and remaining gaps.
 
-Create a separate guide covering:
+Use the [60-minute sequence](../docs/interview-process.md): orient, investigate, formulate repair intent, implement, challenge with a related case, and hand over. AI is available in every phase.
 
-1. At least two viable representations or approaches.
-2. Relevant safety and liveness properties.
-3. A minimal counterexample and adjacent regression.
-4. Domain-specific observations for the six common rubric dimensions.
-5. Common clarifications and a recorded hint ladder.
-6. How the [60-minute process](../docs/interview-process.md) applies.
-7. Pilot and AI-only baseline status.
+The [rubric](../docs/rubric.md) scores understanding, approach choice, and judgment about AI output. Tests support those claims; record functional correctness separately. A passing-check count does not set the reasoning rating.
 
-Keep [rubric dimensions](../docs/rubric.md) stable. Do not add a hidden required trick or tool.
+## For interviewers
+
+Keep administration and reference material here or in a separate guide. State readiness accurately: specification, starter available, harness checked, or piloted.
+
+Supply starter.py, reference.py, test_contract.py, exercise.json, incident.json, CANDIDATE.md, rubric.md, interviewer-guide.md, and example-intent.md. List candidate_files and exact expected_starter_failures in exercise.json; add the slug to interview.py. Include the shared neutral intent.md worksheet in exports. Omit reference.py, rubric.md, interviewer-guide.md, and example-intent.md from candidate_files; share broad assessment criteria in the brief.
+
+When adding or changing executable materials, use `python3 interview.py verify` to check the harness. This is an authoring check, not the candidate's rubric.
+
+The interviewer guide should explain viable approaches and trade-offs, relevant safety and progress properties, a minimal counterexample and related case, scenario-specific observations for the six common dimensions, clarifications and recorded hints, the [60-minute process](../docs/interview-process.md), and pilot status.
+
+Use concise probes that reveal a causal explanation, choice of approach, and evaluation of an AI proposal. Keep the rubric stable across scenarios and accept equivalent approaches supported by the contract.
+
+Let the candidate choose the inquiry. Begin with a neutral invitation and score the relevance of the question, its priority, and use of the answer. Record diagnosis-specific prompts as hints when supplied before discovery. Observe along the way and assign final ratings after the session.

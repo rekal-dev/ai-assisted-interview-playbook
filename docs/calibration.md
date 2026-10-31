@@ -16,7 +16,7 @@ A clear rubric helps the first. It does not establish the second or third.
 
 Use the included executable packet and first run python3 interview.py verify. Run the session with engineers representative of the role. Measure time spent on orientation, reading, reproduction, repair, verification, and handoff.
 
-If setup or code comprehension overwhelms the session, reduce the materials or repair scope. Keep the 60-minute core: initial intent, one reproduced failure, a supported repair, an adjacent check, revised intent, and a handoff. Do not turn a larger feature extension into an unstated pass condition.
+If setup or code comprehension overwhelms the session, reduce the materials or repair scope. Keep the 60-minute core: AI-assisted fact-finding, problem formulation and approach choice, repair intent before implementation edits, a scoped repair, related-case evidence, revised intent, and handoff. Do not turn a larger feature extension into an unstated pass condition.
 
 Check that the contract is achievable with the supplied primitives and that more than one defensible representation can earn the strongest ratings.
 
@@ -24,7 +24,7 @@ Check that the contract is achievable with the supplied primitives and that more
 
 Run repeated autonomous attempts with:
 
-- The same candidate brief, environment contract, rubric, and accessible guides.
+- The same candidate brief, environment contract, broad assessment criteria, and comparable access to public materials. Record any access to worked answers or case-specific rubric anchors.
 - Comparable tool access, files, wall-clock time, and resource budget.
 - The same ability to obtain factual clarifications, through a consistent channel.
 - The same published failure categories and evaluation standard.

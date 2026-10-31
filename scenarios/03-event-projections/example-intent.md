@@ -1,6 +1,8 @@
 # Example intent and revision
 
-## Initial instruction
+Interviewer reference after initial investigation. The candidate chooses the inquiry and wording; this is one possible repair instruction and revision.
+
+## Repair instruction after initial investigation
 
 Use source version per entity as order; delivery time is not source order. Inspect the report that an older update appeared after deletion. Complete snapshots allow accepting a newer version without replaying every earlier version. Preserve the highest accepted version even when no profile is visible.
 

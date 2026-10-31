@@ -1,6 +1,8 @@
 # Example intent and revision
 
-## Initial instruction
+Interviewer reference after initial investigation. The candidate chooses the inquiry and wording; this is one possible repair instruction and revision.
+
+## Repair instruction after initial investigation
 
 Treat logical payment identity separately from transport attempts. Model the local durable intent, bank ledger, and requests still in flight. The bank deduplicates one stable key for this exercise; our database cannot atomically include its effect.
 

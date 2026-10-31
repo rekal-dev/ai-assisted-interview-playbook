@@ -1,35 +1,24 @@
-# Initial intent prompt
+# Investigation
 
-Write the instruction you would actually give your AI collaborator before editing
-the implementation. You may use AI to help formulate it. Keep it specific to the
-evidence and contract in front of you; length is not a scoring criterion.
+Use AI freely. Choose what to ask, read, or try before changing the implementation.
+Keep brief notes or excerpts from the actual interaction; polished prose is unnecessary.
 
-## Intended outcome and scope
+- What question or instruction did you choose, and why?
+- What did you learn, and from what source?
+- What remains uncertain?
 
-What should the system promise? What are you choosing to leave outside this repair?
+# Repair intent
 
-## Working model
+After investigating, capture the instruction you give AI before implementation edits.
+Explain the change you want to make and why you chose that approach. Use any format
+that communicates your intent clearly; AI may help write it.
 
-Which identities, state, boundaries, and transitions matter? What is still uncertain?
+# After new information
 
-## Required properties and assumptions
-
-What must always hold? What progress is required? Which guarantees may the AI rely on?
-
-## Investigation and delegation
-
-What should AI investigate or change first? What result would contradict your model?
-What decisions require clarification rather than an invented assumption?
-
-## Acceptance evidence
-
-What should be executed or inspected before you accept the repair?
-
-# Revised intent after evidence
-
-Record the observation that changed your instruction, the revised instruction,
-and which earlier guarantee still needs to hold.
+What did you observe? Capture your revised instruction, or explain why the approach
+still holds. Record any new uncertainty or changed decision.
 
 # Handoff
 
-State the supported result, actual checks run, and remaining limits.
+Include changed code, reproduction notes or commands, actual check results,
+the guarantee supported, and remaining limits.
