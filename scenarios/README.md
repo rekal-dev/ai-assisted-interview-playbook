@@ -11,7 +11,7 @@ All four packets use the [60-minute process](../docs/interview-process.md), [six
 | [Event projections](03-event-projections/README.md) | Source order and derived state | Older events arriving after deletion | Executable kit |
 | [Payment recovery](04-payment-recovery/README.md) | An external effect with a lost response | Recovery after the bank committed | Executable kit |
 
-The first packet develops the original reservation example. The other three vary the modeling boundary and failure mechanism while retaining the same assessment structure.
+The four packets vary the modeling boundary and failure mechanism while retaining the same assessment structure.
 
 All four packets include runnable starters, reference repairs, deterministic contract checks, incidents, intent worksheets, and scenario rubrics. Run python3 interview.py verify, then export a self-contained packet.
 

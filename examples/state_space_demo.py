@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The screenshots' Cracking the Safe example as runnable modeling code."""
+"""Construct a shortest password-covering string using a de Bruijn graph."""
 import argparse
 
 

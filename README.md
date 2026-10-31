@@ -1,18 +1,36 @@
 # AI Assisted Interview Playbook
 
-Ready-to-use **60-minute interviews with unrestricted AI**: runnable broken services, deterministic checks, reference repairs, candidate packets, and intent-prompt rubrics. Python 3.10+ and the standard library are sufficient.
+When AI can complete more and more standardized coding tasks, how should an engineer demonstrate their ability? Which capabilities were algorithm interviews trying to measure, which still matter, and how do we recognize them?
 
-## LeetCode is dead What are we measuring now
+## LeetCode is dead. What are we measuring now?
 
-The original screenshots open the problem this repository addresses. Algorithm interviews compress engineering into a clean, closed world with fixed inputs and a cheap verifier. As AI becomes effective at that test, the test can lose its value as a hiring signal.
+A company has forty-five minutes to assess an engineer. It needs interviewers with different levels of experience to evaluate thousands of candidates from different backgrounds, cheaply and consistently.
 
-**The underlying thinking still matters.** The screenshots argue that its lasting value is the ability to define state, recognize invariants, choose an abstraction, understand constraints, and falsify a plausible solution.
+The convenient answer is an algorithm problem. Strip away business ambiguity, technical debt, and unfamiliar infrastructure. Give the candidate clear inputs, clear outputs, and a checker that can tell whether the answer works. A complicated engineering capability becomes a small, comparable test.
 
-Their Cracking the Safe example makes the point concrete: treating passwords as nodes suggests a search problem; treating length n−1 suffixes as nodes and passwords as edges exposes an Eulerian traversal. Choosing the model changes the work.
+Then comes the arms race. Candidates learn the questions. Interviewers adapt harder competition problems. Those problems enter books and question banks. Candidates learn those too. The questions keep changing, and the preparation industry keeps catching up.
 
-Real engineering adds retries, crashes, stale workers, and uncertain external effects. The article therefore proposes moving assessment toward **problem formulation and adversarial verification**. Our discussion develops that argument into this practical framework.
+AI accelerates the same cycle. A task with fixed rules and an inexpensive automated checker is a useful target for generation, search, and verification. When a candidate can obtain a correct solution simply by handing the problem to AI, the final code tells the interviewer less about that candidate's engineering ability.
 
-Read the [screenshots' argument and our analysis](docs/original-argument.md), or run its [modeling example](examples/state_space_demo.py):
+Anthropic has described this happening inside its own hiring process. In [January 2026, Tristan Hume explained](https://www.anthropic.com/research/AI-resistant-technical-evaluations) how successive Claude models overtook a performance-engineering take-home that explicitly allowed AI. Keeping the test ahead of the models pushed it toward more unusual problems, at a cost to realism. In [October 2026, engineering manager Felix Rieseberg wrote](https://felixrieseberg.com/hunger-beats-tenure-advice-for-junior-engineers/) that he had stopped using traditional coding interviews and was looking for working prototypes that showed taste, empathy, and principled thinking.
+
+Anthropic's [October 2026 study of its own workplace](https://www.anthropic.com/research/employment-at-anthropic) adds another part of the story: as agents handled more implementation, human attention became a bottleneck, and hiring assessments increasingly emphasized autonomy and judgment. These accounts make the design question concrete: how do we observe someone choosing, directing, and evaluating useful work with AI?
+
+**The failure of a measuring tool does not mean the underlying ability has lost its value.**
+
+Memorizing known patterns has limited value. Learning to choose a model, understand its state space, identify invariants, reason about concurrency, and find a counterexample still matters. These are the skills behind deciding what a system remembers, who owns a resource, what a retry means, and which changes must happen together.
+
+Consider *Cracking the Safe*: construct a shortest string containing every password of length n over an alphabet of size k. Treat each password as a node and the problem suggests a difficult search over arrangements. Treat each length n−1 suffix as a node and each complete password as an edge, and an Eulerian traversal exposes a direct construction. The useful step is choosing the representation that reveals the structure.
+
+Production adds the conditions a small coding exercise can leave out: a request is retried, a response disappears after a commit, a worker resumes after losing ownership, or an older event arrives after a deletion. A plausible implementation can pass its ordinary tests and still break a safety invariant.
+
+As generating code becomes easier, more of the work moves from **construction to falsification**: finding where an apparently correct solution fails, identifying the assumption it violated, and repairing the model that allowed it. Challenging complex code can demand deeper understanding than writing a familiar solution from scratch.
+
+That suggests two places to look for interview evidence: **problem formulation**, where the candidate turns an ambiguous situation into a useful model, and **adversarial verification**, where they test that model against failures and changing conditions.
+
+This repository turns those ideas into **60-minute interviews with unrestricted AI**. Each exercise includes a runnable broken service, deterministic checks, a reference repair, a candidate packet, and an observable rubric. The purpose is to establish a reusable framework for assessing judgment, modeling, and directing work with AI, then extend it across different engineering situations. Python 3.10+ and the standard library are sufficient.
+
+Read [why this framework](docs/why-this-framework.md), or run the [modeling example](examples/state_space_demo.py):
 
 ~~~sh
 python3 examples/state_space_demo.py --n 2 --k 2
@@ -20,7 +38,7 @@ python3 examples/state_space_demo.py --n 2 --k 2
 
 ## The intent prompt is the signal
 
-Our working thesis is that the candidate's **intent prompt is a first-class assessment artifact**.
+The candidate's **intent prompt is a first-class assessment artifact**.
 
 It expresses what the candidate thinks the problem is: which facts matter, which identities and states must be distinguished, what must remain true, what AI may assume, which trade-offs are acceptable, and what evidence would justify accepting a repair.
 

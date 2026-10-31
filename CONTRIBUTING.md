@@ -1,6 +1,6 @@
 # Contributing runnable interview situations
 
-The original screenshots' argument and the intent-prompt thesis are the starting point. Contributions should make judgment, modeling, and problem formulation observable in a concrete executable situation.
+Contributions should make judgment, modeling, and problem formulation observable in a concrete executable situation. Each exercise should connect the candidate's intent prompt to a consequential modeling decision, a repair, and evidence that supports it.
 
 ## Minimum exercise
 
